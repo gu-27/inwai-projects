@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Meeting Brain — Inland NW AI</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rust:#C85A17; --rust-dk:#a84a13; --rust-lt:#fdf0e8;
+  --brown:#6B4423; --brown-lt:#f0e8de;
+  --teal:#2C8C8C; --teal-dk:#237070; --teal-lt:#e0f3f3;
+  --cream:#F5F1EB; --cream-dk:#ebe5db;
+  --dark:#2d1f0e; --mid:#7a5c3a; --light:#c4b49e; --border:#d4c9bc;
+  --hdr:56px; --tab:62px; --r:12px;
+}
+html,body{height:100%;background:var(--cream);color:var(--dark);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#app{display:flex;flex-direction:column;height:100%;max-width:640px;margin:0 auto;position:relative}
+
+/* Header */
+#app-header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;height:var(--hdr);background:var(--brown);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.brand{display:flex;align-items:center;gap:.6rem}
+.brand-icon{font-size:1.4rem}
+.brand-name{font-size:1rem;font-weight:700;line-height:1}
+.brand-sub{font-size:.65rem;opacity:.75;letter-spacing:.06em;text-transform:uppercase}
+.hdr-actions{display:flex;gap:.5rem;align-items:center}
+.hdr-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:.4rem .75rem;font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:background .2s}
+.hdr-btn:hover{background:rgba(255,255,255,.25)}
+.hdr-btn.syncing .sync-icon{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;display:inline-block;margin-left:2px}
+.sync-dot.stale{background:#ff9800}
+
+/* Tab bar */
+#tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;height:var(--tab);background:#fff;border-top:2px solid var(--border);display:flex;z-index:100}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;border:none;background:none;cursor:pointer;color:var(--light);font-size:.65rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;transition:color .2s;padding:.3rem 0}
+.tab .tab-icon{font-size:1.2rem;line-height:1}
+.tab.active{color:var(--rust)}
+.tab.active .tab-icon{transform:scale(1.1)}
+.tab-badge{background:var(--rust);color:#fff;border-radius:99px;font-size:.55rem;padding:.1rem .35rem;position:absolute;top:.4rem;right:calc(50% - 1.4rem)}
+
+/* Main content */
+#view-content{flex:1;overflow-y:auto;padding-top:var(--hdr);padding-bottom:var(--tab);-webkit-overflow-scrolling:touch}
+
+/* Sections */
+.form-section{background:#fff;border-radius:var(--r);margin:.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rust);margin-bottom:1rem;border-bottom:1px solid var(--rust-lt);padding-bottom:.4rem}
+
+/* Form */
+.form-row{margin-bottom:.9rem}
+.form-row:last-child{margin-bottom:0}
+.form-row label{display:block;font-size:.78rem;font-weight:600;color:var(--mid);margin-bottom:.3rem}
+input[type=text],input[type=tel],input[type=email],input[type=date],select,textarea{width:100%;padding:.7rem .85rem;border:2px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:#fff;color:var(--dark);-webkit-appearance:none;appearance:none;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--rust)}
+textarea{min-height:90px;resize:vertical;line-height:1.5}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a5c3a' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2.2rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.form-actions{margin:.75rem;display:flex;gap:.75rem;padding-bottom:.25rem}
+.btn-primary{flex:1;padding:.9rem;background:var(--rust);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:var(--rust-dk)}
+.btn-primary:disabled{background:var(--light);cursor:default}
+.btn-cancel{padding:.9rem 1.25rem;background:none;border:2px solid var(--border);border-radius:10px;font-size:.95rem;color:var(--mid);cursor:pointer}
+
+/* Voice groups */
+.voice-group{position:relative}
+.voice-group textarea{padding-right:3rem}
+.mic-btn{position:absolute;right:.5rem;bottom:.5rem;width:2rem;height:2rem;border-radius:50%;border:none;background:var(--teal-lt);color:var(--teal-dk);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
+.mic-btn:hover{background:var(--teal);color:#fff}
+.mic-btn.recording{background:var(--rust);color:#fff;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* Checkboxes */
+.check-group{display:flex;flex-wrap:wrap;gap:.5rem}
+.check-label{display:flex;align-items:center;gap:.4rem;background:var(--cream);border:2px solid var(--border);border-radius:8px;padding:.45rem .75rem;cursor:pointer;font-size:.85rem;transition:all .2s}
+.check-label input{accent-color:var(--rust)}
+.check-label:has(input:checked){background:var(--rust-lt);border-color:var(--rust);color:var(--rust)}
+
+/* Upload */
+.upload-area{border:2px dashed var(--border);border-radius:10px;min-height:100px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;overflow:hidden}
+.upload-area:hover{border-color:var(--rust);background:var(--rust-lt)}
+.upload-area.drag-over{border-color:var(--rust);background:var(--rust-lt);transform:scale(1.01)}
+.upload-placeholder{text-align:center;color:var(--light);padding:1.5rem}
+.upload-placeholder span{font-size:2rem;display:block;margin-bottom:.4rem}
+.upload-placeholder p{font-size:.85rem}
+.card-preview-img{width:100%;border-radius:8px;display:block}
+
+/* Meeting cards */
+.meeting-card{background:#fff;border-radius:var(--r);margin:.75rem .75rem .5rem;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;transition:box-shadow .2s;border-left:4px solid var(--border);position:relative}
+.meeting-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.meeting-card.status-cold{border-left-color:#9e9e9e}
+.meeting-card.status-warm{border-left-color:#f5a623}
+.meeting-card.status-interested{border-left-color:var(--teal)}
+.meeting-card.status-scheduled{border-left-color:#2196f3}
+.meeting-card.status-proposal{border-left-color:#9c27b0}
+.meeting-card.status-closed{border-left-color:#4caf50}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.card-name{font-size:1rem;font-weight:700;color:var(--dark)}
+.card-company{font-size:.8rem;color:var(--mid);margin-top:.15rem}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;flex-shrink:0}
+.card-thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+.card-meta{display:flex;gap:.5rem;align-items:center;margin-top:.5rem;flex-wrap:wrap}
+.card-date{font-size:.75rem;color:var(--light)}
+.card-preview{font-size:.82rem;color:var(--mid);margin-top:.4rem;line-height:1.4}
+.tag-row{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}
+.tag{background:var(--cream-dk);color:var(--mid);border-radius:99px;font-size:.68rem;padding:.15rem .5rem}
+
+/* Status badges */
+.status-badge{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.2rem .55rem;border-radius:99px}
+.s-cold{background:#f0f0f0;color:#666}
+.s-warm{background:#fff3e0;color:#e65100}
+.s-interested{background:var(--teal-lt);color:var(--teal-dk)}
+.s-scheduled{background:#e3f2fd;color:#1565c0}
+.s-proposal{background:#f3e5f5;color:#6a1b9a}
+.s-closed{background:#e8f5e9;color:#2e7d32}
+
+/* Follow-up badges */
+.fu-badge{font-size:.72rem;font-weight:600;padding:.15rem .5rem;border-radius:6px;display:inline-flex;align-items:center;gap:.25rem}
+.fu-overdue{background:#ffebee;color:#c62828}
+.fu-thisweek{background:#fff8e1;color:#e65100}
+.fu-future{background:var(--cream-dk);color:var(--mid)}
+.fu-done{background:#e8f5e9;color:#2e7d32}
+
+/* Search & filter bar */
+.list-controls{padding:.75rem .75rem .25rem;display:flex;flex-direction:column;gap:.5rem;position:sticky;top:var(--hdr);background:var(--cream);z-index:10}
+.search-input{width:100%;padding:.65rem 1rem;border:2px solid var(--border);border-radius:99px;font-size:.9rem;background:#fff;outline:none}
+.search-input:focus{border-color:var(--rust)}
+.filter-pills{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none}
+.filter-pills::-webkit-scrollbar{display:none}
+.pill{padding:.3rem .75rem;border-radius:99px;border:2px solid var(--border);background:none;font-size:.75rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--mid)}
+.pill.active{background:var(--rust);border-color:var(--rust);color:#fff}
+
+/* Empty state */
+.empty-state{text-align:center;padding:3rem 1.5rem;color:var(--light)}
+.empty-state .empty-icon{font-size:3rem;display:block;margin-bottom:.75rem}
+.empty-state p{font-size:.95rem}
+
+/* Follow-up view */
+.fu-card{background:#fff;border-radius:var(--r);margin:.75rem .75rem .5rem;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.fu-name{font-weight:700;font-size:.95rem}
+.fu-company{font-size:.8rem;color:var(--mid)}
+.fu-meta{display:flex;gap:.5rem;align-items:center;margin:.4rem 0;flex-wrap:wrap}
+.fu-next{font-size:.82rem;color:var(--mid);margin:.3rem 0}
+.fu-actions{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
+.btn-sm{padding:.4rem .85rem;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:background .2s}
+.btn-complete{background:var(--teal-lt);color:var(--teal-dk)}
+.btn-complete:hover{background:var(--teal);color:#fff}
+.btn-email{background:var(--rust-lt);color:var(--rust)}
+.btn-email:hover{background:var(--rust);color:#fff}
+.btn-view{background:var(--cream-dk);color:var(--mid)}
+.btn-view:hover{background:var(--border)}
+
+/* Insights */
+.insight-card{background:#fff;border-radius:var(--r);margin:.75rem .75rem .5rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.insight-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.85rem}
+.big-stat{font-size:2.8rem;font-weight:900;color:var(--rust);line-height:1}
+.big-label{font-size:.8rem;color:var(--mid);margin-top:.15rem}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem}
+.stat-box{background:var(--cream);border-radius:8px;padding:.75rem;text-align:center}
+.stat-box .n{font-size:1.6rem;font-weight:900;color:var(--brown)}
+.stat-box .l{font-size:.72rem;color:var(--mid);margin-top:.1rem}
+.bar-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.bar-label{font-size:.78rem;color:var(--mid);min-width:80px}
+.bar-track{flex:1;height:10px;background:var(--cream-dk);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s ease}
+.bar-count{font-size:.75rem;color:var(--mid);min-width:24px;text-align:right}
+.interest-item{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--border)}
+.interest-item:last-child{border-bottom:none}
+.interest-item .n{font-weight:700;color:var(--rust)}
+
+/* Overlays & Modals */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;flex-direction:column;justify-content:flex-end}
+.overlay.hidden{display:none}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.25rem .75rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:1}
+.modal-header h2{font-size:1.1rem;color:var(--dark)}
+.modal-close{background:none;border:none;font-size:1.2rem;color:var(--mid);cursor:pointer;padding:.25rem}
+.modal-body{padding:1.25rem}
+.detail-section{margin-bottom:1.25rem}
+.detail-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rust);margin-bottom:.5rem}
+.detail-contact{display:grid;grid-template-columns:1fr 1fr;gap:.5rem .75rem;margin-bottom:.25rem}
+.detail-field label{font-size:.7rem;color:var(--light);display:block}
+.detail-field .val{font-size:.9rem;color:var(--dark)}
+.detail-field a{color:var(--teal);text-decoration:none}
+.detail-notes{font-size:.9rem;line-height:1.6;color:var(--dark);white-space:pre-wrap}
+.detail-actions{display:flex;gap:.75rem;padding:1rem 1.25rem;border-top:1px solid var(--border);position:sticky;bottom:0;background:#fff}
+.detail-edit-btn{flex:1;padding:.8rem;background:var(--rust);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer}
+.detail-del-btn{padding:.8rem 1.1rem;background:none;border:2px solid #ffcdd2;color:#c62828;border-radius:10px;font-size:.9rem;cursor:pointer}
+
+/* Settings */
+.settings-row{margin-bottom:1rem}
+.settings-row label{display:block;font-size:.8rem;font-weight:600;color:var(--mid);margin-bottom:.35rem}
+.settings-row input[type=text],
+.settings-row input[type=password]{width:100%;padding:.7rem .85rem;border:2px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit}
+.settings-row input:focus{border-color:var(--rust);outline:none}
+.token-row{position:relative}
+.token-row input{padding-right:3rem}
+.token-toggle{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--mid)}
+.settings-actions{display:flex;flex-direction:column;gap:.6rem}
+.btn-settings{padding:.75rem 1rem;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;text-align:center;border:none}
+.btn-sync-gh{background:var(--teal);color:#fff}
+.btn-sync-gh:hover{background:var(--teal-dk)}
+.btn-export{background:var(--cream-dk);color:var(--dark)}
+.btn-export:hover{background:var(--border)}
+.btn-import{background:var(--cream-dk);color:var(--dark)}
+.btn-danger{background:#ffebee;color:#c62828}
+.sync-status{font-size:.75rem;color:var(--mid);margin-top:.4rem}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0}
+.toggle-label{font-size:.88rem;color:var(--dark)}
+input[type=checkbox]{width:auto;accent-color:var(--rust)}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(var(--tab) + .75rem);left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:.6rem 1.25rem;border-radius:99px;font-size:.85rem;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* Spinner */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* View title bar */
+.view-title-bar{padding:.85rem 1rem .25rem;display:flex;justify-content:space-between;align-items:center}
+.view-title{font-size:1rem;font-weight:700;color:var(--brown)}
+.view-count{font-size:.78rem;color:var(--light);background:var(--cream-dk);padding:.15rem .55rem;border-radius:99px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="app-header">
+    <div class="brand">
+      <span class="brand-icon">🧠</span>
+      <div>
+        <div class="brand-name">Meeting Brain</div>
+        <div class="brand-sub">Inland NW AI</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" id="sync-btn" onclick="syncToGitHub()">
+        <span class="sync-icon">↑</span> Sync <span class="sync-dot stale" id="sync-dot"></span>
+      </button>
+      <button class="hdr-btn" onclick="openSettings()" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main id="view-content"></main>
+
+  <nav id="tab-bar">
+    <button class="tab active" data-view="add" onclick="switchView('add')">
+      <span class="tab-icon">＋</span><span>Add</span>
+    </button>
+    <button class="tab" data-view="dashboard" onclick="switchView('dashboard')">
+      <span class="tab-icon">☰</span><span>Meetings</span>
+    </button>
+    <button class="tab" data-view="followups" onclick="switchView('followups')">
+      <span class="tab-icon">◷</span><span>Follow-ups</span>
+      <span class="tab-badge hidden" id="fu-badge"></span>
+    </button>
+    <button class="tab" data-view="insights" onclick="switchView('insights')">
+      <span class="tab-icon">◈</span><span>Insights</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Settings Modal -->
+<div class="overlay hidden" id="settings-modal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2>⚙ Settings</h2>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-row">
+        <label>GitHub Personal Access Token</label>
+        <div class="token-row">
+          <input type="password" id="s-token" placeholder="github_pat_…" oninput="onTokenInput()">
+          <button class="token-toggle" onclick="toggleTokenVisibility()">👁</button>
+        </div>
+        <div class="sync-status" id="s-token-status"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Auto-sync on every save</span>
+        <input type="checkbox" id="s-autosync" onchange="onAutoSyncChange()">
+      </div>
+      <div class="sync-status" id="s-lastsync"></div>
+      <br>
+      <div class="settings-actions">
+        <button class="btn-settings btn-sync-gh" onclick="syncToGitHub()">↑ Sync to GitHub Now</button>
+        <button class="btn-settings btn-export" onclick="exportData()">⬇ Export meetings.json</button>
+        <label class="btn-settings btn-import" style="cursor:pointer">
+          ⬆ Import from JSON
+          <input type="file" accept="application/json,.json" style="display:none" onchange="importData(this)">
+        </label>
+        <button class="btn-settings btn-danger" onclick="confirmClearData()">✕ Clear All Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="overlay hidden" id="detail-modal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2 id="detail-modal-title">Meeting Details</h2>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div id="detail-content" class="modal-body"></div>
+    <div class="detail-actions">
+      <button class="detail-del-btn" onclick="deleteFromDetail()">Delete</button>
+      <button class="detail-edit-btn" onclick="editFromDetail()">Edit Meeting</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIG & STATE
+// ─────────────────────────────────────────────
+const CONFIG = {
+  owner:    'gu-27',
+  repo:     'inwai-projects',
+  branch:   'main',
+  dataPath: 'meeting-brain/meetings.json',
+};
+
+const STATE = {
+  meetings:  [],
+  fileSHA:   '',
+  view:      'add',
+  editingId: null,
+  search:    '',
+  filter:    'all',
+  detailId:  null,
+  cardPhoto: null,     // pending base64 from upload
+  synced:    false,
+  get token()    { return localStorage.getItem('inw_token') || ''; },
+  get autoSync() { return localStorage.getItem('inw_autosync') === '1'; },
+  get lastSync() { return localStorage.getItem('inw_lastsync') || ''; },
+};
+
+// ─────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(d){ if(!d) return ''; try{ return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
+function weekFromNow(){ const d=new Date(); d.setDate(d.getDate()+7); return d.toISOString().split('T')[0]; }
+function genId(){ return 'meeting_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+function fuClass(m){
+  if(!m.followUpDate) return '';
+  if(m.followUpCompleted) return 'fu-done';
+  if(m.followUpDate < today()) return 'fu-overdue';
+  if(m.followUpDate <= weekFromNow()) return 'fu-thisweek';
+  return 'fu-future';
+}
+function fuLabel(m){
+  if(!m.followUpDate) return '';
+  const cls = fuClass(m);
+  const labels = {'fu-overdue':'⚠ Overdue','fu-thisweek':'📅 This week','fu-future':'📅','fu-done':'✓ Done'};
+  return `<span class="fu-badge ${cls}">${labels[cls]||''} ${fmtDate(m.followUpDate)}</span>`;
+}
+
+function statusBadge(s){
+  return `<span class="status-badge s-${s}">${s}</span>`;
+}
+
+function pendingFollowUps(){
+  return STATE.meetings.filter(m => m.followUpDate && !m.followUpCompleted).length;
+}
+
+// ─────────────────────────────────────────────
+// BASE64 HELPERS
+// ─────────────────────────────────────────────
+function encB64(str){ const b=new TextEncoder().encode(str); let s=''; b.forEach(x=>s+=String.fromCharCode(x)); return btoa(s); }
+function decB64(b64){ const b=atob(b64); const arr=Uint8Array.from(b,c=>c.charCodeAt(0)); return new TextDecoder().decode(arr); }
+
+// ─────────────────────────────────────────────
+// GITHUB API
+// ─────────────────────────────────────────────
+async function ghGet(){
+  const url=`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataPath}`;
+  const res=await fetch(url,{headers:{Authorization:`token ${STATE.token}`,'Cache-Control':'no-cache'}});
+  if(!res.ok) throw new Error(`GitHub GET ${res.status}`);
+  const data=await res.json();
+  STATE.fileSHA=data.sha;
+  const parsed=JSON.parse(decB64(data.content.replace(/\n/g,'')));
+  return parsed.meetings||parsed;
+}
+
+async function ghPut(meetings){
+  const content=encB64(JSON.stringify({meetings},null,2));
+  const url=`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataPath}`;
+  const res=await fetch(url,{
+    method:'PUT',
+    headers:{Authorization:`token ${STATE.token}`,'Content-Type':'application/json'},
+    body:JSON.stringify({message:'Update meetings via Meeting Brain',content,sha:STATE.fileSHA,branch:CONFIG.branch})
+  });
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||`GitHub PUT ${res.status}`); }
+  const result=await res.json();
+  STATE.fileSHA=result.content.sha;
+}
+
+// ─────────────────────────────────────────────
+// DATA MANAGEMENT
+// ─────────────────────────────────────────────
+function saveLocal(){
+  localStorage.setItem('inw_meetings', JSON.stringify(STATE.meetings));
+}
+
+async function loadData(){
+  // Try GitHub first
+  if(STATE.token){
+    try{
+      STATE.meetings = await ghGet();
+      saveLocal();
+      STATE.synced = true;
+      updateSyncDot(true);
+      return;
+    } catch(e){
+      console.warn('GitHub load failed:', e.message);
+    }
+  }
+  // Fallback to localStorage
+  try{
+    const local = localStorage.getItem('inw_meetings');
+    if(local) STATE.meetings = JSON.parse(local);
+  } catch(e){ STATE.meetings = []; }
+  updateSyncDot(false);
+}
+
+async function syncToGitHub(){
+  if(!STATE.token){ toast('Add your GitHub token in Settings first.'); openSettings(); return; }
+  const btn=document.getElementById('sync-btn');
+  btn.classList.add('syncing');
+  try{
+    // Fresh read for SHA, then write current state
+    await ghGet(); // updates STATE.fileSHA
+    await ghPut(STATE.meetings);
+    const now = new Date().toISOString();
+    localStorage.setItem('inw_lastsync', now);
+    STATE.synced = true;
+    updateSyncDot(true);
+    updateLastSync();
+    toast('Synced to GitHub ✓');
+  } catch(e){
+    toast('Sync failed: ' + e.message);
+  }
+  btn.classList.remove('syncing');
+}
+
+function updateSyncDot(synced){
+  const dot=document.getElementById('sync-dot');
+  if(dot){ dot.classList.toggle('stale',!synced); }
+}
+
+async function saveMeeting(entry){
+  // Update local state
+  const idx = STATE.meetings.findIndex(m=>m.id===entry.id);
+  if(idx>=0) STATE.meetings[idx]=entry;
+  else STATE.meetings.push(entry);
+  saveLocal();
+  updateSyncDot(false);
+  // Auto-sync if enabled
+  if(STATE.autoSync && STATE.token){
+    try{
+      await ghGet();
+      // Merge: take GitHub data, apply this entry on top
+      const ghMeetings = STATE.meetings; // we just loaded in ghGet
+      await ghPut(STATE.meetings);
+      const now=new Date().toISOString();
+      localStorage.setItem('inw_lastsync',now);
+      updateSyncDot(true);
+    } catch(e){ console.warn('Auto-sync failed:',e.message); }
+  }
+}
+
+async function deleteMeetingById(id){
+  STATE.meetings = STATE.meetings.filter(m=>m.id!==id);
+  saveLocal();
+  updateSyncDot(false);
+  if(STATE.autoSync && STATE.token){
+    try{ await ghGet(); await ghPut(STATE.meetings); updateSyncDot(true); } catch(e){}
+  }
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify({meetings:STATE.meetings},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='meetings.json';
+  a.click();
+}
+
+function importData(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const parsed=JSON.parse(e.target.result);
+      const arr=parsed.meetings||parsed;
+      if(!Array.isArray(arr)) throw new Error('Invalid format');
+      STATE.meetings=arr;
+      saveLocal();
+      updateSyncDot(false);
+      toast(`Imported ${arr.length} meetings`);
+      render();
+    } catch(err){ toast('Import failed: ' + err.message); }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+function confirmClearData(){
+  if(confirm('Delete ALL meetings? This cannot be undone.')){
+    STATE.meetings=[];
+    saveLocal();
+    updateSyncDot(false);
+    toast('All data cleared.');
+    render();
+  }
+}
+
+// ─────────────────────────────────────────────
+// TAB / VIEW SWITCHING
+// ─────────────────────────────────────────────
+function switchView(v){
+  STATE.view=v;
+  STATE.editingId=null;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  render();
+}
+
+function render(){
+  updateFuBadge();
+  if(STATE.view==='add')       renderAdd();
+  else if(STATE.view==='dashboard') renderDashboard();
+  else if(STATE.view==='followups') renderFollowups();
+  else if(STATE.view==='insights')  renderInsights();
+}
+
+function updateFuBadge(){
+  const n=pendingFollowUps();
+  const badge=document.getElementById('fu-badge');
+  if(badge){ badge.textContent=n; badge.classList.toggle('hidden',n===0); }
+}
+
+// ─────────────────────────────────────────────
+// VIEW: ADD / EDIT FORM
+// ─────────────────────────────────────────────
+function renderAdd(){
+  const m = STATE.editingId ? STATE.meetings.find(x=>x.id===STATE.editingId) : null;
+  const v = (f,def='') => m ? (m[f]!=null ? m[f] : def) : def;
+  const t = today();
+  const statuses=['cold','warm','interested','scheduled','proposal','closed'];
+  const interests=['Education','Consulting','Integration','Custom Package'];
+  const checked = v('interestedIn',[]);
+
+  document.getElementById('view-content').innerHTML = `
+    <form id="meeting-form" onsubmit="return false">
+      <div class="form-section">
+        <div class="section-label">Contact Info</div>
+        <div class="form-row">
+          <label>Date</label>
+          <input type="date" id="f-date" value="${v('date',t)}">
+        </div>
+        <div class="form-row">
+          <label>Contact Name *</label>
+          <input type="text" id="f-name" value="${esc(v('contactName'))}" placeholder="Jane Smith" autocomplete="name">
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Title / Role</label>
+            <input type="text" id="f-title" value="${esc(v('title'))}" placeholder="Owner">
+          </div>
+          <div>
+            <label>Company</label>
+            <input type="text" id="f-company" value="${esc(v('company'))}" placeholder="Acme Corp">
+          </div>
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Phone</label>
+            <input type="tel" id="f-phone" value="${esc(v('phone'))}" placeholder="509-555-0100">
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" id="f-email" value="${esc(v('email'))}" placeholder="jane@acme.com">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Meeting Details</div>
+        <div class="form-row">
+          <label>Meeting Notes</label>
+          <div class="voice-group">
+            <textarea id="f-notes" placeholder="What did you discuss?">${esc(v('meetingNotes'))}</textarea>
+            <button type="button" class="mic-btn" data-target="f-notes" title="Voice input">🎙</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Pain Points Identified</label>
+          <div class="voice-group">
+            <textarea id="f-pain" placeholder="Manual invoicing, no CRM…">${esc(v('painPoints'))}</textarea>
+            <button type="button" class="mic-btn" data-target="f-pain" title="Voice input">🎙</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>AI Opportunities Discussed</label>
+          <div class="voice-group">
+            <textarea id="f-ai" placeholder="Automate workflows, customer chatbot…">${esc(v('aiOpportunities'))}</textarea>
+            <button type="button" class="mic-btn" data-target="f-ai" title="Voice input">🎙</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Interested In</label>
+          <div class="check-group">
+            ${interests.map(opt=>`<label class="check-label"><input type="checkbox" name="interest" value="${opt}" ${checked.includes(opt)?'checked':''}> ${opt}</label>`).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Next Steps</label>
+          <div class="voice-group">
+            <textarea id="f-next" placeholder="Send pricing info, follow up in 2 weeks">${esc(v('nextSteps'))}</textarea>
+            <button type="button" class="mic-btn" data-target="f-next" title="Voice input">🎙</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Status & Follow-up</div>
+        <div class="form-row two-col">
+          <div>
+            <label>Status</label>
+            <select id="f-status">
+              ${statuses.map(s=>`<option value="${s}" ${v('status','cold')===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label>Follow-up Date</label>
+            <input type="date" id="f-followup" value="${v('followUpDate')}">
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="check-label" style="display:inline-flex;background:none;border:none;padding:0">
+            <input type="checkbox" id="f-emailed" ${v('emailSent')?'checked':''}>
+            Email sent to contact
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Business Card</div>
+        <div class="form-row">
+          <div class="upload-area" id="card-drop-area">
+            <input type="file" id="f-card" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleCardUpload(this.files[0])">
+            <div id="card-preview">
+              ${m&&m.businessCardPhoto
+                ? `<img class="card-preview-img" src="${m.businessCardPhoto}" alt="Business card">`
+                : `<div class="upload-placeholder"><span>📷</span><p>Tap or drop business card photo</p></div>`}
+            </div>
+          </div>
+          <input type="text" id="f-caption" value="${esc(v('businessCardCaption'))}" placeholder="Met at Chamber event, runs a 10-person firm…" style="margin-top:.5rem">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Tags</div>
+        <div class="form-row">
+          <label>Tags (comma separated)</label>
+          <input type="text" id="f-tags" value="${esc((v('tags',[])||[]).join(', '))}" placeholder="accounting, spokane, warm lead">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        ${m?`<button type="button" class="btn-cancel" onclick="cancelEdit()">Cancel</button>`:''}
+        <button type="button" class="btn-primary" id="submit-btn" onclick="submitForm()">
+          ${m?'Update Meeting':'Save Meeting'}
+        </button>
+      </div>
+      <div style="height:.5rem"></div>
+    </form>
+  `;
+
+  setupVoiceButtons();
+  setupCardUpload();
+}
+
+function cancelEdit(){
+  STATE.editingId=null;
+  STATE.cardPhoto=null;
+  render();
+}
+
+// ─────────────────────────────────────────────
+// FORM SUBMIT
+// ─────────────────────────────────────────────
+async function submitForm(){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){ toast('Contact name is required.'); document.getElementById('f-name').focus(); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Saving…';
+
+  // Get existing photo if editing and no new photo
+  const existing = STATE.editingId ? STATE.meetings.find(m=>m.id===STATE.editingId) : null;
+  const photo = STATE.cardPhoto || (existing ? existing.businessCardPhoto : null);
+
+  const entry = {
+    id:                   STATE.editingId || genId(),
+    date:                 document.getElementById('f-date').value,
+    timestamp:            new Date().toISOString(),
+    contactName:          name,
+    title:                document.getElementById('f-title').value.trim(),
+    company:              document.getElementById('f-company').value.trim(),
+    phone:                document.getElementById('f-phone').value.trim(),
+    email:                document.getElementById('f-email').value.trim(),
+    meetingNotes:         document.getElementById('f-notes').value.trim(),
+    painPoints:           document.getElementById('f-pain').value.trim(),
+    aiOpportunities:      document.getElementById('f-ai').value.trim(),
+    interestedIn:         [...document.querySelectorAll('input[name="interest"]:checked')].map(cb=>cb.value),
+    nextSteps:            document.getElementById('f-next').value.trim(),
+    followUpDate:         document.getElementById('f-followup').value,
+    followUpCompleted:    existing ? existing.followUpCompleted : false,
+    status:               document.getElementById('f-status').value,
+    businessCardPhoto:    photo,
+    businessCardCaption:  document.getElementById('f-caption').value.trim(),
+    emailSent:            document.getElementById('f-emailed').checked,
+    tags:                 document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+  };
+
+  await saveMeeting(entry);
+  STATE.editingId = null;
+  STATE.cardPhoto = null;
+
+  toast(existing ? 'Meeting updated ✓' : 'Meeting saved ✓');
+  switchView('dashboard');
+}
+
+// ─────────────────────────────────────────────
+// VIEW: DASHBOARD
+// ─────────────────────────────────────────────
+function renderDashboard(){
+  const statuses=['all','cold','warm','interested','scheduled','proposal','closed'];
+  let filtered = [...STATE.meetings];
+  if(STATE.filter!=='all') filtered=filtered.filter(m=>m.status===STATE.filter);
+  if(STATE.search){
+    const q=STATE.search.toLowerCase();
+    filtered=filtered.filter(m=>(m.contactName||'').toLowerCase().includes(q)||(m.company||'').toLowerCase().includes(q)||(m.tags||[]).some(t=>t.toLowerCase().includes(q)));
+  }
+  filtered.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  document.getElementById('view-content').innerHTML = `
+    <div class="list-controls">
+      <input class="search-input" type="search" placeholder="Search name, company, tag…" value="${esc(STATE.search)}" oninput="onSearch(this.value)" autocomplete="off">
+      <div class="filter-pills">
+        ${statuses.map(s=>`<button class="pill ${STATE.filter===s?'active':''}" onclick="onFilter('${s}')">${s==='all'?'All':s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="view-title-bar">
+      <span class="view-title">Meetings</span>
+      <span class="view-count">${filtered.length} of ${STATE.meetings.length}</span>
+    </div>
+    ${filtered.length===0
+      ? `<div class="empty-state"><span class="empty-icon">📋</span><p>${STATE.meetings.length===0?'No meetings yet. Tap + Add to log your first.':'No matches for your search.'}</p></div>`
+      : filtered.map(renderCard).join('')}
+  `;
+}
+
+function renderCard(m){
+  const tags = (m.tags||[]).slice(0,3).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+  return `
+    <div class="meeting-card status-${m.status}" onclick="openDetail('${m.id}')">
+      <div class="card-top">
+        <div>
+          <div class="card-name">${esc(m.contactName)}</div>
+          <div class="card-company">${[m.company,m.title].filter(Boolean).map(esc).join(' · ')}</div>
+        </div>
+        <div class="card-right">
+          ${statusBadge(m.status)}
+          ${m.businessCardPhoto?`<img class="card-thumb" src="${m.businessCardPhoto}" alt="biz card">`:''}
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="card-date">${fmtDate(m.date)}</span>
+        ${m.followUpDate ? fuLabel(m) : ''}
+      </div>
+      ${m.meetingNotes?`<div class="card-preview">${esc(m.meetingNotes.slice(0,120))}${m.meetingNotes.length>120?'…':''}</div>`:''}
+      ${tags?`<div class="tag-row">${tags}</div>`:''}
+    </div>
+  `;
+}
+
+function onSearch(val){ STATE.search=val; renderDashboard(); }
+function onFilter(val){ STATE.filter=val; renderDashboard(); }
+
+// ─────────────────────────────────────────────
+// VIEW: FOLLOW-UPS
+// ─────────────────────────────────────────────
+function renderFollowups(){
+  let pending = STATE.meetings
+    .filter(m=>m.followUpDate && !m.followUpCompleted)
+    .sort((a,b)=>a.followUpDate.localeCompare(b.followUpDate));
+  let done = STATE.meetings
+    .filter(m=>m.followUpCompleted && m.followUpDate)
+    .sort((a,b)=>b.followUpDate.localeCompare(a.followUpDate))
+    .slice(0,5);
+
+  document.getElementById('view-content').innerHTML = `
+    <div class="view-title-bar">
+      <span class="view-title">Follow-ups</span>
+      <span class="view-count">${pending.length} pending</span>
+    </div>
+    ${pending.length===0
+      ? `<div class="empty-state"><span class="empty-icon">✅</span><p>You're all caught up!</p></div>`
+      : pending.map(m=>`
+        <div class="fu-card">
+          <div class="card-top">
+            <div>
+              <div class="fu-name">${esc(m.contactName)}</div>
+              <div class="fu-company">${esc(m.company||'')} ${statusBadge(m.status)}</div>
+            </div>
+            <div>${fuLabel(m)}</div>
+          </div>
+          ${m.nextSteps?`<div class="fu-next">→ ${esc(m.nextSteps.slice(0,120))}</div>`:''}
+          <div class="fu-actions">
+            <button class="btn-sm btn-complete" onclick="markComplete('${m.id}')">✓ Mark Complete</button>
+            ${m.email?`<button class="btn-sm btn-email" onclick="generateEmail('${m.id}')">✉ Email Template</button>`:''}
+            <button class="btn-sm btn-view" onclick="openDetail('${m.id}')">View</button>
+          </div>
+        </div>
+      `).join('')}
+    ${done.length>0?`
+      <div class="view-title-bar" style="margin-top:.5rem">
+        <span class="view-title" style="font-size:.85rem;color:var(--light)">Recently Completed</span>
+      </div>
+      ${done.map(m=>`
+        <div class="fu-card" style="opacity:.6">
+          <div class="fu-name">${esc(m.contactName)} <span style="font-size:.75rem;font-weight:normal;color:var(--mid)">— ${esc(m.company||'')}</span></div>
+          <div class="fu-meta"><span class="fu-badge fu-done">✓ ${fmtDate(m.followUpDate)}</span></div>
+        </div>
+      `).join('')}
+    `:''}
+  `;
+}
+
+async function markComplete(id){
+  const m=STATE.meetings.find(x=>x.id===id);
+  if(!m) return;
+  m.followUpCompleted=true;
+  saveLocal();
+  updateSyncDot(false);
+  if(STATE.autoSync && STATE.token){ try{ await ghGet(); await ghPut(STATE.meetings); updateSyncDot(true); }catch(e){} }
+  toast('Follow-up marked complete ✓');
+  render();
+}
+
+function generateEmail(id){
+  const m=STATE.meetings.find(x=>x.id===id);
+  if(!m) return;
+  const subj=`Following up — ${m.company||'our conversation'}`;
+  const body=[
+    `Hi ${m.contactName||'there'},`,
+    ``,
+    `It was great meeting you${m.date?` on ${fmtDate(m.date)}`:''}. I wanted to follow up on our conversation${m.company?` about ${m.company}`:'.'}.`,
+    ``,
+    m.nextSteps ? `As we discussed, next steps:\n${m.nextSteps}` : '',
+    ``,
+    `I'd love to explore how Inland NW AI can help${m.company?` ${m.company}`:' your team'}${m.aiOpportunities?` with:\n${m.aiOpportunities}`:'.'}.`,
+    ``,
+    `Please don't hesitate to reach out with any questions!`,
+    ``,
+    `Best,`,
+    `[Your Name]`,
+    `Inland NW AI`,
+  ].join('\n');
+  window.location.href=`mailto:${encodeURIComponent(m.email||'')}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+
+// ─────────────────────────────────────────────
+// VIEW: INSIGHTS
+// ─────────────────────────────────────────────
+function renderInsights(){
+  const ms = STATE.meetings;
+  const total = ms.length;
+  const t = today();
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+  const monthAgo = new Date(); monthAgo.setDate(monthAgo.getDate()-30);
+  const thisWeek = ms.filter(m=>m.date && new Date(m.date+'T12:00:00')>=weekAgo).length;
+  const thisMonth = ms.filter(m=>m.date && new Date(m.date+'T12:00:00')>=monthAgo).length;
+
+  const statuses=['cold','warm','interested','scheduled','proposal','closed'];
+  const statusColors={'cold':'#9e9e9e','warm':'#f5a623','interested':'#2C8C8C','scheduled':'#2196f3','proposal':'#9c27b0','closed':'#4caf50'};
+  const statusCounts=Object.fromEntries(statuses.map(s=>[s,ms.filter(m=>m.status===s).length]));
+
+  const interestCounts={};
+  ms.forEach(m=>(m.interestedIn||[]).forEach(i=>{interestCounts[i]=(interestCounts[i]||0)+1;}));
+  const topInterests=Object.entries(interestCounts).sort((a,b)=>b[1]-a[1]);
+
+  const tagCounts={};
+  ms.forEach(m=>(m.tags||[]).forEach(t=>{tagCounts[t]=(tagCounts[t]||0)+1;}));
+  const topTags=Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  const overdue=ms.filter(m=>m.followUpDate && !m.followUpCompleted && m.followUpDate<t).length;
+  const maxStatus=Math.max(1,...Object.values(statusCounts));
+
+  document.getElementById('view-content').innerHTML = `
+    <div class="view-title-bar"><span class="view-title">Insights</span></div>
+
+    <div class="insight-card">
+      <div class="insight-title">Overview</div>
+      <div class="big-stat">${total}</div>
+      <div class="big-label">Total meetings logged</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="n">${thisWeek}</div><div class="l">This week</div></div>
+        <div class="stat-box"><div class="n">${thisMonth}</div><div class="l">Last 30 days</div></div>
+        <div class="stat-box"><div class="n">${pendingFollowUps()}</div><div class="l">Follow-ups due</div></div>
+        <div class="stat-box" style="background:#ffebee"><div class="n" style="color:#c62828">${overdue}</div><div class="l">Overdue</div></div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">Pipeline by Status</div>
+      ${statuses.map(s=>`
+        <div class="bar-row">
+          <div class="bar-label">${s.charAt(0).toUpperCase()+s.slice(1)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(statusCounts[s]/maxStatus*100)}%;background:${statusColors[s]}"></div></div>
+          <div class="bar-count">${statusCounts[s]}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    ${topInterests.length>0?`
+    <div class="insight-card">
+      <div class="insight-title">Services Interest</div>
+      ${topInterests.map(([k,v])=>`
+        <div class="interest-item">
+          <span>${k}</span>
+          <span class="n">${v}</span>
+        </div>
+      `).join('')}
+    </div>`:''}
+
+    ${topTags.length>0?`
+    <div class="insight-card">
+      <div class="insight-title">Top Tags</div>
+      <div class="tag-row" style="margin-top:.25rem">
+        ${topTags.map(([k,v])=>`<span class="tag">${esc(k)} (${v})</span>`).join('')}
+      </div>
+    </div>`:''}
+
+    ${total===0?`<div class="empty-state"><span class="empty-icon">📊</span><p>Log your first meeting to see insights here.</p></div>`:''}
+    <div style="height:.5rem"></div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// MEETING DETAIL MODAL
+// ─────────────────────────────────────────────
+function openDetail(id){
+  const m=STATE.meetings.find(x=>x.id===id);
+  if(!m) return;
+  STATE.detailId=id;
+
+  document.getElementById('detail-modal-title').textContent=m.contactName||'Meeting Details';
+  document.getElementById('detail-content').innerHTML=`
+    <div class="detail-section">
+      <div class="detail-contact">
+        ${m.title?`<div class="detail-field"><label>Title</label><div class="val">${esc(m.title)}</div></div>`:''}
+        ${m.company?`<div class="detail-field"><label>Company</label><div class="val">${esc(m.company)}</div></div>`:''}
+        ${m.phone?`<div class="detail-field"><label>Phone</label><div class="val"><a href="tel:${esc(m.phone)}">${esc(m.phone)}</a></div></div>`:''}
+        ${m.email?`<div class="detail-field"><label>Email</label><div class="val"><a href="mailto:${esc(m.email)}">${esc(m.email)}</a></div></div>`:''}
+        <div class="detail-field"><label>Date Met</label><div class="val">${fmtDate(m.date)}</div></div>
+        <div class="detail-field"><label>Status</label><div class="val">${statusBadge(m.status)}</div></div>
+      </div>
+      ${m.followUpDate?`<div style="margin-top:.5rem">${fuLabel(m)}</div>`:''}
+    </div>
+
+    ${m.meetingNotes?`<div class="detail-section"><div class="detail-section-label">Meeting Notes</div><div class="detail-notes">${esc(m.meetingNotes)}</div></div>`:''}
+    ${m.painPoints?`<div class="detail-section"><div class="detail-section-label">Pain Points</div><div class="detail-notes">${esc(m.painPoints)}</div></div>`:''}
+    ${m.aiOpportunities?`<div class="detail-section"><div class="detail-section-label">AI Opportunities</div><div class="detail-notes">${esc(m.aiOpportunities)}</div></div>`:''}
+    ${m.interestedIn&&m.interestedIn.length?`<div class="detail-section"><div class="detail-section-label">Interested In</div><div class="check-group">${m.interestedIn.map(i=>`<span class="check-label" style="cursor:default;background:var(--rust-lt);border-color:var(--rust);color:var(--rust)">${i}</span>`).join('')}</div></div>`:''}
+    ${m.nextSteps?`<div class="detail-section"><div class="detail-section-label">Next Steps</div><div class="detail-notes">${esc(m.nextSteps)}</div></div>`:''}
+
+    ${m.businessCardPhoto?`
+      <div class="detail-section">
+        <div class="detail-section-label">Business Card</div>
+        <img src="${m.businessCardPhoto}" style="width:100%;border-radius:10px;margin-bottom:.4rem" alt="Business card">
+        ${m.businessCardCaption?`<div style="font-size:.82rem;color:var(--mid);font-style:italic">${esc(m.businessCardCaption)}</div>`:''}
+      </div>`:''}
+
+    ${m.tags&&m.tags.length?`<div class="detail-section"><div class="tag-row">${m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`:''}
+
+    ${m.email&&!m.followUpCompleted?`
+      <div class="detail-section">
+        <button class="btn-sm btn-email" style="width:100%;padding:.65rem" onclick="generateEmail('${m.id}')">✉ Generate Follow-up Email</button>
+      </div>`:''}
+    <div style="height:.25rem"></div>
+  `;
+  document.getElementById('detail-modal').classList.remove('hidden');
+}
+
+function closeDetail(){
+  document.getElementById('detail-modal').classList.add('hidden');
+  STATE.detailId=null;
+}
+
+function editFromDetail(){
+  const id=STATE.detailId;
+  closeDetail();
+  STATE.editingId=id;
+  STATE.cardPhoto=null;
+  STATE.view='add';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view==='add'));
+  render();
+}
+
+async function deleteFromDetail(){
+  const id=STATE.detailId;
+  const m=STATE.meetings.find(x=>x.id===id);
+  if(!confirm(`Delete meeting with ${m?.contactName||'this contact'}?`)) return;
+  await deleteMeetingById(id);
+  closeDetail();
+  toast('Meeting deleted.');
+  render();
+}
+
+// ─────────────────────────────────────────────
+// VOICE INPUT
+// ─────────────────────────────────────────────
+let activeRec=null;
+let recBaseText='';
+
+function setupVoiceButtons(){
+  document.querySelectorAll('.mic-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleVoice(btn.dataset.target,btn));
+  });
+}
+
+function toggleVoice(targetId,btn){
+  if(activeRec){ activeRec.stop(); return; }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice input not supported. Use Chrome or Safari.'); return; }
+  const textarea=document.getElementById(targetId);
+  if(!textarea) return;
+  recBaseText=textarea.value;
+  const rec=new SR();
+  rec.continuous=true;
+  rec.interimResults=true;
+  rec.lang='en-US';
+  rec.onstart=()=>{ btn.classList.add('recording'); };
+  rec.onresult=(e)=>{
+    let final=recBaseText, interim='';
+    for(let i=0;i<e.results.length;i++){
+      if(e.results[i].isFinal){ final+=(final?' ':'')+e.results[i][0].transcript; recBaseText=final; }
+      else interim+=e.results[i][0].transcript;
+    }
+    textarea.value=final+(interim?' '+interim:'');
+  };
+  rec.onerror=(e)=>{ toast('Voice error: '+e.error); };
+  rec.onend=()=>{ activeRec=null; document.querySelectorAll('.mic-btn.recording').forEach(b=>b.classList.remove('recording')); };
+  rec.start();
+  activeRec=rec;
+}
+
+// ─────────────────────────────────────────────
+// PHOTO UPLOAD
+// ─────────────────────────────────────────────
+function setupCardUpload(){
+  const area=document.getElementById('card-drop-area');
+  const input=document.getElementById('f-card');
+  if(!area||!input) return;
+  area.addEventListener('click',()=>input.click());
+  area.addEventListener('dragenter',e=>{e.preventDefault();area.classList.add('drag-over');});
+  area.addEventListener('dragover',e=>{e.preventDefault();area.classList.add('drag-over');});
+  area.addEventListener('dragleave',e=>{if(!area.contains(e.relatedTarget))area.classList.remove('drag-over');});
+  area.addEventListener('drop',e=>{e.preventDefault();area.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)handleCardUpload(f);});
+}
+
+async function handleCardUpload(file){
+  if(!file||!file.type.startsWith('image/')) return;
+  const uri = await compressImage(file,1400);
+  STATE.cardPhoto=uri;
+  const preview=document.getElementById('card-preview');
+  if(preview) preview.innerHTML=`<img class="card-preview-img" src="${uri}" alt="Business card">`;
+}
+
+function compressImage(file,maxW=1400){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        const c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.82));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─────────────────────────────────────────────
+// SETTINGS MODAL
+// ─────────────────────────────────────────────
+function openSettings(){
+  document.getElementById('s-token').value=STATE.token;
+  document.getElementById('s-autosync').checked=STATE.autoSync;
+  updateLastSync();
+  document.getElementById('settings-modal').classList.remove('hidden');
+}
+function closeSettings(){ document.getElementById('settings-modal').classList.add('hidden'); }
+
+function onTokenInput(){
+  const val=document.getElementById('s-token').value.trim();
+  localStorage.setItem('inw_token',val);
+  document.getElementById('s-token-status').textContent=val?'Token saved to this device.':'Token cleared.';
+}
+
+function onAutoSyncChange(){
+  const checked=document.getElementById('s-autosync').checked;
+  localStorage.setItem('inw_autosync',checked?'1':'');
+}
+
+function toggleTokenVisibility(){
+  const inp=document.getElementById('s-token');
+  inp.type=inp.type==='password'?'text':'password';
+}
+
+function updateLastSync(){
+  const el=document.getElementById('s-lastsync');
+  if(el) el.textContent=STATE.lastSync?`Last synced: ${new Date(STATE.lastSync).toLocaleString()}`:'Not synced yet.';
+}
+
+function updateLastSyncHeader(){
+  // just refresh sync dot
+  updateSyncDot(STATE.synced);
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',async()=>{
+  render(); // render immediately with empty state
+  await loadData();
+  render(); // re-render with loaded data
+  updateFuBadge();
+});
+</script>
+</body>
+</html>
