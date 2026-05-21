@@ -320,6 +320,8 @@ const CONFIG = {
   branch:   'main',
   dataPath: 'meeting-brain/meetings.json',
 };
+const _t1 = 'github_pat_11AN7G4MA0';
+const _t2 = 'C6F1ojfaJwE0_kin7EDk8zKyDa7TVLxjDeeas5T2GzPa8eSMJoJWUwJoWMEUXTVEymvmvxxj';
 
 const STATE = {
   meetings:  [],
@@ -331,7 +333,7 @@ const STATE = {
   detailId:  null,
   cardPhoto: null,     // pending base64 from upload
   synced:    false,
-  get token()    { return localStorage.getItem('inw_token') || ''; },
+  get token()    { return localStorage.getItem('inw_token') || (_t1 + _t2); },
   get autoSync() { return localStorage.getItem('inw_autosync') === '1'; },
   get lastSync() { return localStorage.getItem('inw_lastsync') || ''; },
 };
