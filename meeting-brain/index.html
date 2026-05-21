@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Meeting Brain — Inland NW AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -14,18 +15,18 @@
   --dark:#2d1f0e; --mid:#7a5c3a; --light:#c4b49e; --border:#d4c9bc;
   --hdr:56px; --tab:62px; --r:12px;
 }
-html,body{height:100%;background:var(--cream);color:var(--dark);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+html,body{height:100%;background:var(--cream);color:var(--dark);font-family:'Inter',sans-serif}
 #app{display:flex;flex-direction:column;height:100%;max-width:640px;margin:0 auto;position:relative}
 
 /* Header */
-#app-header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;height:var(--hdr);background:var(--brown);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.brand{display:flex;align-items:center;gap:.6rem}
-.brand-icon{font-size:1.4rem}
-.brand-name{font-size:1rem;font-weight:700;line-height:1}
-.brand-sub{font-size:.65rem;opacity:.75;letter-spacing:.06em;text-transform:uppercase}
+#app-header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;height:var(--hdr);background:#fff;border-bottom:2px solid var(--border);color:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.brand{display:flex;align-items:center;gap:.65rem}
+.brand-icon{width:32px;height:32px;object-fit:contain;flex-shrink:0}
+.brand-name{font-size:.95rem;font-weight:800;line-height:1;color:var(--dark);letter-spacing:-.01em}
+.brand-sub{font-size:.62rem;color:var(--teal);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:.1rem}
 .hdr-actions{display:flex;gap:.5rem;align-items:center}
-.hdr-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:.4rem .75rem;font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:background .2s}
-.hdr-btn:hover{background:rgba(255,255,255,.25)}
+.hdr-btn{background:var(--cream);border:1.5px solid var(--border);color:var(--dark);border-radius:8px;padding:.4rem .75rem;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:all .2s;font-family:'Inter',sans-serif}
+.hdr-btn:hover{border-color:var(--teal);color:var(--teal)}
 .hdr-btn.syncing .sync-icon{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;display:inline-block;margin-left:2px}
@@ -40,11 +41,15 @@ html,body{height:100%;background:var(--cream);color:var(--dark);font-family:-app
 .tab-badge{background:var(--rust);color:#fff;border-radius:99px;font-size:.55rem;padding:.1rem .35rem;position:absolute;top:.4rem;right:calc(50% - 1.4rem)}
 
 /* Main content */
-#view-content{flex:1;overflow-y:auto;padding-top:var(--hdr);padding-bottom:var(--tab);-webkit-overflow-scrolling:touch}
+#view-content{flex:1;overflow-y:auto;padding-top:var(--hdr);padding-bottom:var(--tab);-webkit-overflow-scrolling:touch;
+  background-color:var(--cream);
+  background-image:radial-gradient(circle,rgba(44,140,140,.12) 1px,transparent 1px);
+  background-size:28px 28px;}
 
 /* Sections */
 .form-section{background:#fff;border-radius:var(--r);margin:.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rust);margin-bottom:1rem;border-bottom:1px solid var(--rust-lt);padding-bottom:.4rem}
+.section-label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--rust);margin-bottom:1rem;border-bottom:1px solid var(--rust-lt);padding-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.section-label::before{content:'';display:block;width:16px;height:2px;background:var(--rust);flex-shrink:0}
 
 /* Form */
 .form-row{margin-bottom:.9rem}
@@ -225,7 +230,7 @@ input[type=checkbox]{width:auto;accent-color:var(--rust)}
 <div id="app">
   <header id="app-header">
     <div class="brand">
-      <span class="brand-icon">🧠</span>
+      <img class="brand-icon" src="https://gu-27.github.io/inland-nw-ai/img/ai-mark.png" alt="Inland NW AI">
       <div>
         <div class="brand-name">Meeting Brain</div>
         <div class="brand-sub">Inland NW AI</div>
