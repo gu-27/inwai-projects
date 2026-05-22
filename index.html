@@ -28,24 +28,24 @@
   /* ── Nav ── */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,.95); backdrop-filter: blur(10px);
+    background: rgba(255,255,255,.97); backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
-    padding: .85rem 2rem;
-    display: flex; align-items: center; gap: 1rem;
+    padding: 0 2.5rem; height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .nav-logo { display: flex; align-items: center; gap: .65rem; text-decoration: none; }
-  .nav-logo img { width: 32px; height: 32px; }
-  .nav-brand { line-height: 1.2; }
-  .nav-brand .name { font-weight: 800; font-size: .95rem; color: var(--dark); }
-  .nav-brand .tag  { font-size: .7rem; color: var(--muted); }
-  .nav-links { display: flex; gap: 1.5rem; margin-left: 2rem; }
-  .nav-links a { font-size: .85rem; font-weight: 500; color: var(--muted); text-decoration: none; }
+  .nav-logo { display: flex; align-items: center; gap: .85rem; text-decoration: none; }
+  .nav-logo img { width: 42px; height: 42px; object-fit: contain; }
+  .nav-logo-text { font-weight: 800; font-size: .95rem; color: var(--dark); line-height: 1.2; }
+  .nav-logo-text span { display: block; font-weight: 400; font-size: .7rem; color: var(--muted); }
+  .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: .85rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .nav-links a:hover { color: var(--teal); }
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
   .nav-cta {
-    margin-left: auto;
-    padding: .55rem 1.25rem; background: var(--rust); color: white;
-    border: none; border-radius: 8px; font-weight: 700; font-size: .85rem;
-    text-decoration: none; cursor: pointer;
+    padding: .55rem 1.4rem; background: var(--rust); color: white;
+    border: none; border-radius: 8px; font-size: .82rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; text-decoration: none;
+    transition: background .15s; white-space: nowrap;
   }
   .nav-cta:hover { background: var(--rust-dk); }
 
@@ -276,18 +276,21 @@
 <!-- Nav -->
 <nav>
   <a class="nav-logo" href="https://inlandnw.ai">
-    <img src="https://gu-27.github.io/inland-nw-ai/img/ai-mark.png" alt="Inland NW AI mark">
-    <div class="nav-brand">
-      <div class="name">INLAND NW AI</div>
-      <div class="tag">Your Inland Northwest AI partner.</div>
+    <img src="https://gu-27.github.io/inland-nw-ai/img/logo.png" alt="Inland NW AI">
+    <div class="nav-logo-text">
+      Inland NW AI
+      <span>Your Inland Northwest AI partner.</span>
     </div>
   </a>
-  <div class="nav-links">
-    <a href="#tools">Tools</a>
-    <a href="#how">How It Works</a>
-    <a href="#idea">Submit an Idea</a>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#idea">Submit an Idea</a></li>
+    <li><a href="https://inlandnw.ai">← Back to inlandnw.ai</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="nav-cta" href="#idea">Got an Idea?</a>
   </div>
-  <a class="nav-cta" href="#idea">Got an Idea?</a>
 </nav>
 
 <!-- Hero -->
