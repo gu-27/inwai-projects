@@ -85,6 +85,15 @@
     text-decoration: none; cursor: pointer; display: inline-block;
   }
   .btn-primary:hover { background: var(--rust-dk); }
+  .trust-bar {
+    margin-top: 1.75rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: .5rem;
+    font-size: .78rem; font-weight: 500; color: var(--muted);
+  }
+  .trust-sep { color: var(--border); }
+  .trust-item:first-child { font-weight: 700; color: var(--teal-dk); }
+
   .btn-secondary {
     padding: .9rem 1.75rem; background: transparent; color: var(--teal);
     border: 1.5px solid var(--teal); border-radius: 10px; font-weight: 600; font-size: .95rem;
@@ -301,6 +310,15 @@
   <div class="hero-actions">
     <a class="btn-primary" href="#idea">Share Your Idea</a>
     <a class="btn-secondary" href="#tools">See What's Possible</a>
+  </div>
+  <div class="trust-bar">
+    <span class="trust-item">🔒 Your data stays yours — no third-party sharing. Ever.</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-item">No subscriptions</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-item">No lock-in</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-item">Flat pricing</span>
   </div>
 </section>
 
