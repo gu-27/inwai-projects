@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inland NW AI: Custom AI Tools & Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rust:     #C85A17;
+    --rust-dk:  #A34712;
+    --rust-lt:  #fdf0e8;
+    --teal:     #2C8C8C;
+    --teal-lt:  #3aadad;
+    --teal-dk:  #1f6666;
+    --teal-bg:  #e0f3f3;
+    --cream:    #F5F1EB;
+    --cream-dk: #EDE7DC;
+    --dark:     #1a1410;
+    --muted:    #7a6a5a;
+    --border:   #e2d9ce;
+    --white:    #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--dark); }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: .85rem 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .nav-logo { display: flex; align-items: center; gap: .65rem; text-decoration: none; }
+  .nav-logo img { width: 32px; height: 32px; }
+  .nav-brand { line-height: 1.2; }
+  .nav-brand .name { font-weight: 800; font-size: .95rem; color: var(--dark); }
+  .nav-brand .tag  { font-size: .7rem; color: var(--muted); }
+  .nav-cta {
+    margin-left: auto;
+    padding: .55rem 1.25rem; background: var(--rust); color: white;
+    border: none; border-radius: 8px; font-weight: 700; font-size: .85rem;
+    text-decoration: none; cursor: pointer;
+  }
+  .nav-cta:hover { background: var(--rust-dk); }
+
+  /* ── Hero ── */
+  .hero {
+    background-color: var(--cream);
+    background-image: radial-gradient(circle, rgba(44,140,140,.1) 1px, transparent 1px);
+    background-size: 36px 36px;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .14em; color: var(--rust); margin-bottom: 1.25rem;
+  }
+  .eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--rust); }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.1;
+    max-width: 760px; margin: 0 auto 1.25rem;
+  }
+  .hero h1 span { color: var(--teal); }
+  .hero p {
+    font-size: 1.1rem; color: var(--muted); line-height: 1.8;
+    max-width: 580px; margin: 0 auto 2rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--teal-bg); color: var(--teal-dk);
+    border: 1px solid var(--teal); border-radius: 20px;
+    padding: .35rem 1rem; font-size: .78rem; font-weight: 600;
+  }
+
+  /* ── Grid ── */
+  .section { padding: 4rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-hdr { text-align: center; margin-bottom: 3rem; }
+  .section-hdr h2 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900;
+    letter-spacing: -.025em; margin-bottom: .65rem;
+  }
+  .section-hdr p { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 540px; margin: 0 auto; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  /* ── Tool Card ── */
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    border-top: 3px solid var(--teal);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .tool-card:hover { box-shadow: 0 10px 40px rgba(44,140,140,.12); transform: translateY(-3px); }
+  .tool-card.accent { border-top-color: var(--rust); }
+
+  .card-preview {
+    background: var(--cream-dk);
+    background-image: radial-gradient(circle, rgba(44,140,140,.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+    height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    position: relative; overflow: hidden;
+  }
+  .card-preview .preview-label {
+    position: absolute; bottom: .6rem; right: .75rem;
+    font-size: .65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--muted);
+  }
+
+  /* Mini UI previews inside card-preview */
+  .mini-cal {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+    width: 200px;
+  }
+  .mini-cal .mc-hdr { font-size: 6px; font-weight: 700; text-align: center; color: var(--muted); padding: 1px; }
+  .mini-cal .mc-day {
+    height: 16px; border-radius: 2px; background: var(--cream);
+    border: .5px solid var(--border);
+  }
+  .mini-cal .mc-day.ev  { background: #FFE4E8; }
+  .mini-cal .mc-day.ev2 { background: #DBEAFE; }
+  .mini-cal .mc-day.past{ background: #F1F5F9; }
+
+  .mini-cards {
+    display: flex; gap: 6px; flex-wrap: wrap; width: 200px; justify-content: center;
+  }
+  .mini-card {
+    width: 56px; height: 72px; border-radius: 4px;
+    background: white; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+
+  .mini-memories {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 190px;
+  }
+  .mini-mem {
+    background: white; border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px; font-size: 6px; color: var(--muted); line-height: 1.4;
+  }
+  .mini-mem strong { display: block; color: var(--dark); font-size: 6.5px; margin-bottom: 2px; }
+
+  .mini-crm {
+    display: flex; flex-direction: column; gap: 4px; width: 200px;
+  }
+  .mini-crm-row {
+    background: white; border: 1px solid var(--border); border-radius: 5px;
+    padding: 4px 7px; display: flex; align-items: center; gap: 6px; font-size: 7px; color: var(--muted);
+  }
+  .mini-crm-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .mini-quiz {
+    display: flex; flex-direction: column; gap: 5px; width: 200px;
+  }
+  .mini-q { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 7px; color: var(--dark); font-weight: 600; }
+  .mini-ans {
+    display: flex; gap: 4px;
+  }
+  .mini-a { flex: 1; border-radius: 4px; padding: 3px 4px; font-size: 6px; text-align: center; font-weight: 600; }
+  .mini-a.correct { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+  .mini-a.wrong   { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+  .mini-a.opt     { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
+
+  .card-body { padding: 1.4rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
+  .card-type {
+    font-size: .65rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--rust); margin-bottom: .5rem;
+  }
+  .card-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .6rem; }
+  .card-desc { font-size: .88rem; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 1rem; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.1rem; }
+  .tag {
+    font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    padding: .2rem .55rem; border-radius: 20px;
+    background: var(--teal-bg); color: var(--teal-dk);
+  }
+  .tag.rust { background: var(--rust-lt); color: var(--rust-dk); }
+  .card-footer { display: flex; gap: .6rem; align-items: center; }
+  .btn-demo {
+    padding: .55rem 1.1rem; background: var(--teal); color: white;
+    border: none; border-radius: 8px; font-weight: 700; font-size: .82rem;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn-demo:hover { background: var(--teal-lt); }
+  .btn-learn {
+    padding: .55rem 1rem; background: transparent; color: var(--teal);
+    border: 1.5px solid var(--teal); border-radius: 8px; font-weight: 600; font-size: .82rem;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn-learn:hover { background: var(--teal); color: white; }
+  .price-tag {
+    margin-left: auto; font-size: .75rem; font-weight: 700;
+    color: var(--muted);
+  }
+
+  /* ── How it works ── */
+  .how-section {
+    background: var(--teal-dk);
+    padding: 4rem 2rem;
+    color: white;
+  }
+  .how-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .how-inner .eyebrow { color: rgba(255,255,255,.7); }
+  .how-inner .eyebrow::before { background: rgba(255,255,255,.5); }
+  .how-inner h2 { color: white; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: -.025em; margin-bottom: .75rem; }
+  .how-inner > p { color: rgba(255,255,255,.75); font-size: 1rem; line-height: 1.8; max-width: 560px; margin: 0 auto 3rem; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+  .step { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 1.5rem; text-align: left; }
+  .step-num { font-size: 1.8rem; font-weight: 900; color: rgba(255,255,255,.2); margin-bottom: .5rem; }
+  .step h3 { font-size: 1rem; font-weight: 700; color: white; margin-bottom: .4rem; }
+  .step p { font-size: .85rem; color: rgba(255,255,255,.65); line-height: 1.6; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--rust); padding: 4rem 2rem; text-align: center;
+  }
+  .cta-section h2 { color: white; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 900; letter-spacing: -.025em; margin-bottom: .75rem; }
+  .cta-section p { color: rgba(255,255,255,.85); font-size: 1rem; line-height: 1.7; max-width: 480px; margin: 0 auto 2rem; }
+  .btn-white {
+    display: inline-block; padding: .9rem 2rem;
+    background: white; color: var(--teal); border-radius: 10px;
+    font-weight: 700; font-size: .95rem; text-decoration: none;
+  }
+  .btn-white:hover { background: var(--cream); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--dark); color: rgba(255,255,255,.5);
+    padding: 2rem; text-align: center; font-size: .82rem; line-height: 1.8;
+  }
+  footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+  footer a:hover { color: white; }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="https://inlandnw.ai">
+    <img src="https://gu-27.github.io/inland-nw-ai/img/ai-mark.png" alt="Inland NW AI mark">
+    <div class="nav-brand">
+      <div class="name">INLAND NW AI</div>
+      <div class="tag">Your Inland Northwest AI partner.</div>
+    </div>
+  </a>
+  <a class="nav-cta" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk — It's Free</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="eyebrow">Tools & Projects</div>
+  <h1>Custom AI tools built for <span>real life.</span></h1>
+  <p>A collection of practical, human-centered web tools. Each one started as a real problem worth solving — and can be customized for your family, team, or business.</p>
+  <span class="hero-badge">All tools are custom-built · No subscriptions · Yours to keep</span>
+</section>
+
+<!-- Tools Grid -->
+<section class="section" style="background: white;">
+  <div class="section-inner">
+    <div class="section-hdr">
+      <div class="eyebrow">What We've Built</div>
+      <h2>Pick a tool. Make it yours.</h2>
+      <p>These are real, working tools. Click any demo to see it live. Every tool can be customized with your branding, data, and use case.</p>
+    </div>
+    <div class="tools-grid">
+
+      <!-- Memory Collector -->
+      <div class="tool-card">
+        <div class="card-preview">
+          <div class="mini-memories">
+            <div class="mini-mem"><strong>Sarah M.</strong>You always made every room brighter the moment you walked in.</div>
+            <div class="mini-mem"><strong>The Johnson Family</strong>Forty years of friendship and counting — here's to forty more!</div>
+            <div class="mini-mem"><strong>Coach Rivera</strong>You changed the way I think about showing up every day.</div>
+            <div class="mini-mem"><strong>Anonymous</strong>The best neighbor anyone could ask for. We love you!</div>
+          </div>
+          <span class="preview-label">Live preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Memory & Celebration</div>
+          <div class="card-title">Memory Collector</div>
+          <div class="card-desc">Send a private link to friends and family and let them contribute memories, photos, and messages — all gathered in one beautiful, scrollable display. Perfect for milestone birthdays, retirements, or any occasion worth celebrating.</div>
+          <div class="card-tags">
+            <span class="tag">Private link</span>
+            <span class="tag">Photo uploads</span>
+            <span class="tag">Shareable display</span>
+            <span class="tag rust">Popular</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-demo" href="#" onclick="alert('Demo coming soon!');return false;">View Demo</a>
+            <span class="price-tag">From $149</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Family / Group Calendar -->
+      <div class="tool-card">
+        <div class="card-preview">
+          <div class="mini-cal">
+            <div class="mc-hdr">S</div><div class="mc-hdr">M</div><div class="mc-hdr">T</div><div class="mc-hdr">W</div><div class="mc-hdr">T</div><div class="mc-hdr">F</div><div class="mc-hdr">S</div>
+            <div class="mc-day past"></div><div class="mc-day past"></div><div class="mc-day past"></div><div class="mc-day past"></div><div class="mc-day past"></div><div class="mc-day ev"></div><div class="mc-day ev"></div>
+            <div class="mc-day ev"></div><div class="mc-day"></div><div class="mc-day"></div><div class="mc-day ev2"></div><div class="mc-day ev2"></div><div class="mc-day"></div><div class="mc-day"></div>
+            <div class="mc-day"></div><div class="mc-day ev"></div><div class="mc-day ev"></div><div class="mc-day ev"></div><div class="mc-day"></div><div class="mc-day"></div><div class="mc-day"></div>
+            <div class="mc-day"></div><div class="mc-day"></div><div class="mc-day ev2"></div><div class="mc-day"></div><div class="mc-day"></div><div class="mc-day ev"></div><div class="mc-day ev"></div>
+          </div>
+          <span class="preview-label">Live preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Planning & Coordination</div>
+          <div class="card-title">Group Calendar Planner</div>
+          <div class="card-desc">A shared, synced calendar for any group — family, team, or club. Color-coded events, cross-device sync, and a zoom slider to see the whole season at a glance. No app downloads, no logins required for viewers.</div>
+          <div class="card-tags">
+            <span class="tag">Cross-device sync</span>
+            <span class="tag">Color-coded events</span>
+            <span class="tag">Season view</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-demo" href="https://gu-27.github.io/family-summer-2026-calendar/" target="_blank">View Demo</a>
+            <span class="price-tag">From $99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meeting Brain / CRM -->
+      <div class="tool-card accent">
+        <div class="card-preview">
+          <div class="mini-crm">
+            <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#2C8C8C"></div><span><strong>Riverside Bakery</strong> · Met Mon · Follow up this week</span></div>
+            <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#C85A17"></div><span><strong>Northside Dental</strong> · Proposal sent · Overdue</span></div>
+            <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#4ade80"></div><span><strong>Valley HVAC</strong> · Closed · Workshop booked</span></div>
+            <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#fbbf24"></div><span><strong>Main St. Boutique</strong> · Interested · Call Thursday</span></div>
+          </div>
+          <span class="preview-label">Live preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Business · CRM</div>
+          <div class="card-title">Meeting Brain</div>
+          <div class="card-desc">A lightweight meeting logger and follow-up tracker built for small business owners and consultants. Log meetings with voice input or a photo of a business card, track next steps, and never lose a lead again.</div>
+          <div class="card-tags">
+            <span class="tag">Voice input</span>
+            <span class="tag">Follow-up tracker</span>
+            <span class="tag">Pipeline view</span>
+            <span class="tag rust">Business tool</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-demo" href="https://gu-27.github.io/inwai-projects/meeting-brain/" target="_blank">View Demo</a>
+            <span class="price-tag">From $199</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thank You Card Generator -->
+      <div class="tool-card">
+        <div class="card-preview">
+          <div class="mini-cards">
+            <div class="mini-card">💌</div>
+            <div class="mini-card">🎉</div>
+            <div class="mini-card">🌿</div>
+            <div class="mini-card">⭐</div>
+            <div class="mini-card">🎂</div>
+            <div class="mini-card">🤝</div>
+          </div>
+          <span class="preview-label">Coming soon</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Relationships & Gratitude</div>
+          <div class="card-title">Thank You Card Studio</div>
+          <div class="card-desc">Generate personalized thank you cards in seconds. Choose a style, type a few details, and get a beautifully formatted card ready to print or share digitally. Great for events, milestones, or everyday gratitude.</div>
+          <div class="card-tags">
+            <span class="tag">AI-assisted writing</span>
+            <span class="tag">Print-ready</span>
+            <span class="tag">Custom branding</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-learn" href="#" onclick="alert('Coming soon — reach out to get early access!');return false;">Coming Soon</a>
+            <span class="price-tag">From $79</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Trivia / Quiz -->
+      <div class="tool-card">
+        <div class="card-preview">
+          <div class="mini-quiz">
+            <div class="mini-q">Which year was the company founded?</div>
+            <div class="mini-ans">
+              <div class="mini-a opt">2018</div>
+              <div class="mini-a correct">2019</div>
+              <div class="mini-a wrong">2021</div>
+            </div>
+            <div class="mini-q" style="margin-top:4px;">Who holds the sales record?</div>
+            <div class="mini-ans">
+              <div class="mini-a opt">Alex</div>
+              <div class="mini-a opt">Jordan</div>
+              <div class="mini-a opt">Morgan</div>
+            </div>
+          </div>
+          <span class="preview-label">Coming soon</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Team Building · Events</div>
+          <div class="card-title">Custom Trivia & Quiz</div>
+          <div class="card-desc">Build a custom trivia game around your company, team, or event. Works on any device, no app required. Great for onboarding, team nights, conferences, or just a Friday afternoon. You supply the questions — we build the game.</div>
+          <div class="card-tags">
+            <span class="tag">Custom questions</span>
+            <span class="tag">Live scoring</span>
+            <span class="tag">No app needed</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-learn" href="#" onclick="alert('Coming soon — reach out to get early access!');return false;">Coming Soon</a>
+            <span class="price-tag">From $149</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Request -->
+      <div class="tool-card" style="border-top-color: var(--rust); background: var(--rust-lt);">
+        <div class="card-preview" style="background: var(--rust-lt); background-image: radial-gradient(circle, rgba(200,90,23,.12) 1px, transparent 1px); background-size: 24px 24px;">
+          <div style="text-align:center; padding: 1.5rem;">
+            <div style="font-size:2.5rem; margin-bottom:.5rem;">💡</div>
+            <div style="font-size:.8rem; font-weight:700; color: var(--rust); max-width:160px; line-height:1.5;">Have an idea? Let's build it.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-type" style="color:var(--rust);">Your Idea Here</div>
+          <div class="card-title">Something Custom</div>
+          <div class="card-desc">Have a problem you'd love a simple tool to solve? I build lightweight, practical web tools for small businesses, families, and teams. No long contracts, no confusing proposals — just a conversation and a working tool.</div>
+          <div class="card-tags">
+            <span class="tag rust">Any use case</span>
+            <span class="tag rust">Fast turnaround</span>
+            <span class="tag rust">Flat pricing</span>
+          </div>
+          <div class="card-footer">
+            <a class="btn-demo" style="background:var(--rust);" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="eyebrow">How It Works</div>
+    <h2>From idea to working tool — fast.</h2>
+    <p>No technical knowledge needed on your end. You describe the problem, I build the solution, and you own it outright.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>We Talk</h3>
+        <p>Free one-hour call to understand what you need, who it's for, and what success looks like.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>I Build</h3>
+        <p>You get a working prototype fast — usually within a few days — so you can react to something real.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>You Own It</h3>
+        <p>The finished tool is yours. Hosted, no subscriptions, no ongoing fees unless you want continued support.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>We Refine</h3>
+        <p>We tweak until it feels right. Most tools go through 2–3 rounds of small adjustments before you're happy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to build something?</h2>
+  <p>Whether you have a specific tool in mind or just a problem worth solving, the first conversation is free and there's no obligation.</p>
+  <a class="btn-white" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk — It's Free</a>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p><strong style="color:rgba(255,255,255,.8)">Inland NW AI</strong> · Spokane & Coeur d'Alene · <a href="https://inlandnw.ai">inlandnw.ai</a></p>
+  <p style="margin-top:.4rem">CuriosITy Driven · People Centered · Thoughtful AI · Growing Together</p>
+</footer>
+
+</body>
+</html>
