@@ -38,6 +38,9 @@
   .nav-brand { line-height: 1.2; }
   .nav-brand .name { font-weight: 800; font-size: .95rem; color: var(--dark); }
   .nav-brand .tag  { font-size: .7rem; color: var(--muted); }
+  .nav-links { display: flex; gap: 1.5rem; margin-left: 2rem; }
+  .nav-links a { font-size: .85rem; font-weight: 500; color: var(--muted); text-decoration: none; }
+  .nav-links a:hover { color: var(--teal); }
   .nav-cta {
     margin-left: auto;
     padding: .55rem 1.25rem; background: var(--rust); color: white;
@@ -46,39 +49,76 @@
   }
   .nav-cta:hover { background: var(--rust-dk); }
 
-  /* ── Hero ── */
-  .hero {
-    background-color: var(--cream);
-    background-image: radial-gradient(circle, rgba(44,140,140,.1) 1px, transparent 1px);
-    background-size: 36px 36px;
-    padding: 5rem 2rem 4rem;
-    text-align: center;
-  }
+  /* ── Eyebrow ── */
   .eyebrow {
     display: inline-flex; align-items: center; gap: .5rem;
     font-size: .68rem; font-weight: 800; text-transform: uppercase;
     letter-spacing: .14em; color: var(--rust); margin-bottom: 1.25rem;
   }
   .eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--rust); }
-  .hero h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900;
-    letter-spacing: -.04em; line-height: 1.1;
-    max-width: 760px; margin: 0 auto 1.25rem;
-  }
-  .hero h1 span { color: var(--teal); }
-  .hero p {
-    font-size: 1.1rem; color: var(--muted); line-height: 1.8;
-    max-width: 580px; margin: 0 auto 2rem;
-  }
-  .hero-badge {
-    display: inline-block;
-    background: var(--teal-bg); color: var(--teal-dk);
-    border: 1px solid var(--teal); border-radius: 20px;
-    padding: .35rem 1rem; font-size: .78rem; font-weight: 600;
-  }
+  .eyebrow.light { color: rgba(255,255,255,.7); }
+  .eyebrow.light::before { background: rgba(255,255,255,.4); }
 
-  /* ── Grid ── */
-  .section { padding: 4rem 2rem; }
+  /* ── Hero ── */
+  .hero {
+    background-color: var(--cream);
+    background-image: radial-gradient(circle, rgba(44,140,140,.1) 1px, transparent 1px);
+    background-size: 36px 36px;
+    padding: 5.5rem 2rem 2.5rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.05;
+    max-width: 820px; margin: 0 auto 1.25rem;
+  }
+  .hero h1 .teal { color: var(--teal); }
+  .hero h1 .rust { color: var(--rust); }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted); line-height: 1.8;
+    max-width: 580px; margin: 0 auto 2.25rem;
+  }
+  .hero-actions { display: flex; gap: .85rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    padding: .9rem 2rem; background: var(--rust); color: white;
+    border: none; border-radius: 10px; font-weight: 700; font-size: .95rem;
+    text-decoration: none; cursor: pointer; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--rust-dk); }
+  .btn-secondary {
+    padding: .9rem 1.75rem; background: transparent; color: var(--teal);
+    border: 1.5px solid var(--teal); border-radius: 10px; font-weight: 600; font-size: .95rem;
+    text-decoration: none; cursor: pointer; display: inline-block;
+  }
+  .btn-secondary:hover { background: var(--teal); color: white; }
+
+  /* ── Value Props Strip ── */
+  .value-strip {
+    background: white;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+  }
+  .value-strip-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+  .vp {
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+  .vp-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--teal-bg); color: var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .vp-icon.rust { background: var(--rust-lt); color: var(--rust); }
+  .vp-text h3 { font-size: .95rem; font-weight: 800; letter-spacing: -.01em; margin-bottom: .25rem; }
+  .vp-text p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── Section ── */
+  .section { padding: 4.5rem 2rem; }
   .section-inner { max-width: 1100px; margin: 0 auto; }
   .section-hdr { text-align: center; margin-bottom: 3rem; }
   .section-hdr h2 {
@@ -87,20 +127,16 @@
   }
   .section-hdr p { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 540px; margin: 0 auto; }
 
+  /* ── Tools Grid ── */
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.75rem;
   }
-
-  /* ── Tool Card ── */
   .tool-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    border-top: 3px solid var(--teal);
-    overflow: hidden;
-    display: flex; flex-direction: column;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; border-top: 3px solid var(--teal);
+    overflow: hidden; display: flex; flex-direction: column;
     transition: box-shadow .2s, transform .2s;
   }
   .tool-card:hover { box-shadow: 0 10px 40px rgba(44,140,140,.12); transform: translateY(-3px); }
@@ -112,7 +148,6 @@
     background-size: 24px 24px;
     height: 160px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 3rem;
     position: relative; overflow: hidden;
   }
   .card-preview .preview-label {
@@ -121,129 +156,119 @@
     letter-spacing: .1em; color: var(--muted);
   }
 
-  /* Mini UI previews inside card-preview */
-  .mini-cal {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
-    width: 200px;
-  }
+  /* Mini previews */
+  .mini-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; width: 200px; }
   .mini-cal .mc-hdr { font-size: 6px; font-weight: 700; text-align: center; color: var(--muted); padding: 1px; }
-  .mini-cal .mc-day {
-    height: 16px; border-radius: 2px; background: var(--cream);
-    border: .5px solid var(--border);
-  }
+  .mini-cal .mc-day { height: 16px; border-radius: 2px; background: var(--cream); border: .5px solid var(--border); }
   .mini-cal .mc-day.ev  { background: #FFE4E8; }
   .mini-cal .mc-day.ev2 { background: #DBEAFE; }
   .mini-cal .mc-day.past{ background: #F1F5F9; }
 
-  .mini-cards {
-    display: flex; gap: 6px; flex-wrap: wrap; width: 200px; justify-content: center;
-  }
-  .mini-card {
-    width: 56px; height: 72px; border-radius: 4px;
-    background: white; border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; box-shadow: 0 2px 6px rgba(0,0,0,.08);
-  }
+  .mini-cards { display: flex; gap: 6px; flex-wrap: wrap; width: 200px; justify-content: center; }
+  .mini-card { width: 56px; height: 72px; border-radius: 4px; background: white; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
 
-  .mini-memories {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 190px;
-  }
-  .mini-mem {
-    background: white; border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px; font-size: 6px; color: var(--muted); line-height: 1.4;
-  }
+  .mini-memories { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 190px; }
+  .mini-mem { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 5px; font-size: 6px; color: var(--muted); line-height: 1.4; }
   .mini-mem strong { display: block; color: var(--dark); font-size: 6.5px; margin-bottom: 2px; }
 
-  .mini-crm {
-    display: flex; flex-direction: column; gap: 4px; width: 200px;
-  }
-  .mini-crm-row {
-    background: white; border: 1px solid var(--border); border-radius: 5px;
-    padding: 4px 7px; display: flex; align-items: center; gap: 6px; font-size: 7px; color: var(--muted);
-  }
+  .mini-crm { display: flex; flex-direction: column; gap: 4px; width: 200px; }
+  .mini-crm-row { background: white; border: 1px solid var(--border); border-radius: 5px; padding: 4px 7px; display: flex; align-items: center; gap: 6px; font-size: 7px; color: var(--muted); }
   .mini-crm-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-  .mini-quiz {
-    display: flex; flex-direction: column; gap: 5px; width: 200px;
-  }
+  .mini-quiz { display: flex; flex-direction: column; gap: 5px; width: 200px; }
   .mini-q { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 7px; color: var(--dark); font-weight: 600; }
-  .mini-ans {
-    display: flex; gap: 4px;
-  }
+  .mini-ans { display: flex; gap: 4px; }
   .mini-a { flex: 1; border-radius: 4px; padding: 3px 4px; font-size: 6px; text-align: center; font-weight: 600; }
   .mini-a.correct { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
   .mini-a.wrong   { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
   .mini-a.opt     { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
 
   .card-body { padding: 1.4rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
-  .card-type {
-    font-size: .65rem; font-weight: 800; text-transform: uppercase;
-    letter-spacing: .12em; color: var(--rust); margin-bottom: .5rem;
-  }
+  .card-type { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--rust); margin-bottom: .5rem; }
   .card-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .6rem; }
   .card-desc { font-size: .88rem; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 1rem; }
   .card-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.1rem; }
-  .tag {
-    font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-    padding: .2rem .55rem; border-radius: 20px;
-    background: var(--teal-bg); color: var(--teal-dk);
-  }
+  .tag { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: .2rem .55rem; border-radius: 20px; background: var(--teal-bg); color: var(--teal-dk); }
   .tag.rust { background: var(--rust-lt); color: var(--rust-dk); }
   .card-footer { display: flex; gap: .6rem; align-items: center; }
-  .btn-demo {
-    padding: .55rem 1.1rem; background: var(--teal); color: white;
-    border: none; border-radius: 8px; font-weight: 700; font-size: .82rem;
-    text-decoration: none; cursor: pointer;
-  }
+  .btn-demo { padding: .55rem 1.1rem; background: var(--teal); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: .82rem; text-decoration: none; cursor: pointer; }
   .btn-demo:hover { background: var(--teal-lt); }
-  .btn-learn {
-    padding: .55rem 1rem; background: transparent; color: var(--teal);
-    border: 1.5px solid var(--teal); border-radius: 8px; font-weight: 600; font-size: .82rem;
-    text-decoration: none; cursor: pointer;
-  }
+  .btn-learn { padding: .55rem 1rem; background: transparent; color: var(--teal); border: 1.5px solid var(--teal); border-radius: 8px; font-weight: 600; font-size: .82rem; text-decoration: none; cursor: pointer; }
   .btn-learn:hover { background: var(--teal); color: white; }
-  .price-tag {
-    margin-left: auto; font-size: .75rem; font-weight: 700;
-    color: var(--muted);
-  }
+  .price-tag { margin-left: auto; font-size: .75rem; font-weight: 700; color: var(--muted); }
 
   /* ── How it works ── */
-  .how-section {
-    background: var(--teal-dk);
-    padding: 4rem 2rem;
-    color: white;
-  }
+  .how-section { background: var(--teal-dk); padding: 4.5rem 2rem; color: white; }
   .how-inner { max-width: 900px; margin: 0 auto; text-align: center; }
-  .how-inner .eyebrow { color: rgba(255,255,255,.7); }
-  .how-inner .eyebrow::before { background: rgba(255,255,255,.5); }
   .how-inner h2 { color: white; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: -.025em; margin-bottom: .75rem; }
   .how-inner > p { color: rgba(255,255,255,.75); font-size: 1rem; line-height: 1.8; max-width: 560px; margin: 0 auto 3rem; }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.5rem; }
   .step { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 1.5rem; text-align: left; }
   .step-num { font-size: 1.8rem; font-weight: 900; color: rgba(255,255,255,.2); margin-bottom: .5rem; }
   .step h3 { font-size: 1rem; font-weight: 700; color: white; margin-bottom: .4rem; }
   .step p { font-size: .85rem; color: rgba(255,255,255,.65); line-height: 1.6; }
+  .step .step-tag { display: inline-block; margin-top: .75rem; font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--teal-lt); }
 
-  /* ── CTA ── */
-  .cta-section {
-    background: var(--rust); padding: 4rem 2rem; text-align: center;
+  /* ── Idea Form Section ── */
+  .idea-section {
+    background-color: var(--cream);
+    background-image: radial-gradient(circle, rgba(44,140,140,.08) 1px, transparent 1px);
+    background-size: 36px 36px;
+    padding: 5rem 2rem;
   }
-  .cta-section h2 { color: white; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 900; letter-spacing: -.025em; margin-bottom: .75rem; }
-  .cta-section p { color: rgba(255,255,255,.85); font-size: 1rem; line-height: 1.7; max-width: 480px; margin: 0 auto 2rem; }
-  .btn-white {
-    display: inline-block; padding: .9rem 2rem;
-    background: white; color: var(--teal); border-radius: 10px;
-    font-weight: 700; font-size: .95rem; text-decoration: none;
+  .idea-inner {
+    max-width: 860px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
   }
-  .btn-white:hover { background: var(--cream); }
+  @media (max-width: 680px) { .idea-inner { grid-template-columns: 1fr; gap: 2rem; } .nav-links { display: none; } }
+  .idea-left h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900;
+    letter-spacing: -.04em; line-height: 1.1; margin-bottom: 1rem;
+  }
+  .idea-left h2 span { color: var(--rust); }
+  .idea-left p { font-size: .95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.25rem; }
+  .idea-proof { display: flex; flex-direction: column; gap: .6rem; margin-top: 1.5rem; }
+  .proof-item { display: flex; align-items: center; gap: .65rem; font-size: .85rem; color: var(--dark); font-weight: 500; }
+  .proof-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+  .proof-dot.rust { background: var(--rust); }
+
+  .idea-form {
+    background: white; border: 1px solid var(--border);
+    border-radius: 18px; padding: 2rem;
+    box-shadow: 0 8px 40px rgba(44,140,140,.1);
+  }
+  .idea-form h3 { font-size: 1.1rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .3rem; }
+  .idea-form .form-sub { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .form-row { margin-bottom: 1rem; }
+  .form-row label { display: block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .35rem; }
+  .form-row input, .form-row textarea, .form-row select {
+    width: 100%; padding: .7rem .9rem;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: .88rem; color: var(--dark);
+    background: var(--cream); outline: none;
+    transition: border-color .15s;
+  }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus { border-color: var(--teal); background: white; }
+  .form-row textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+  .form-submit {
+    width: 100%; padding: .9rem; background: var(--rust); color: white;
+    border: none; border-radius: 10px; font-weight: 800; font-size: .95rem;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background .15s;
+  }
+  .form-submit:hover { background: var(--rust-dk); }
+  .form-note { text-align: center; font-size: .75rem; color: var(--muted); margin-top: .75rem; line-height: 1.5; }
 
   /* ── Footer ── */
-  footer {
-    background: var(--dark); color: rgba(255,255,255,.5);
-    padding: 2rem; text-align: center; font-size: .82rem; line-height: 1.8;
-  }
+  footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 2rem; text-align: center; font-size: .82rem; line-height: 1.8; }
   footer a { color: rgba(255,255,255,.6); text-decoration: none; }
   footer a:hover { color: white; }
+
+  /* ── Thank you state ── */
+  .form-thanks { display: none; text-align: center; padding: 2rem 1rem; }
+  .form-thanks .thanks-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .form-thanks h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: .5rem; }
+  .form-thanks p { font-size: .9rem; color: var(--muted); line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -257,24 +282,59 @@
       <div class="tag">Your Inland Northwest AI partner.</div>
     </div>
   </a>
-  <a class="nav-cta" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk — It's Free</a>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#how">How It Works</a>
+    <a href="#idea">Submit an Idea</a>
+  </div>
+  <a class="nav-cta" href="#idea">Got an Idea?</a>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <div class="eyebrow">Tools & Projects</div>
-  <h1>Custom AI tools built for <span>real life.</span></h1>
-  <p>A collection of practical, human-centered web tools. Each one started as a real problem worth solving — and can be customized for your family, team, or business.</p>
-  <span class="hero-badge">All tools are custom-built · No subscriptions · Yours to keep</span>
+  <div class="eyebrow">Custom AI Tools</div>
+  <h1>You think it.<br><span class="teal">I build it.</span><br>You <span class="rust">own it.</span></h1>
+  <p class="hero-sub">Real, working tools — built from real ideas. Every tool you see here started as a simple conversation. Browse what's possible, then share your own idea and I'll have a demo back to you fast.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#idea">Share Your Idea</a>
+    <a class="btn-secondary" href="#tools">See What's Possible</a>
+  </div>
 </section>
 
+<!-- Value Props -->
+<div class="value-strip">
+  <div class="value-strip-inner">
+    <div class="vp">
+      <div class="vp-icon">💡</div>
+      <div class="vp-text">
+        <h3>Thought to Product — Fast</h3>
+        <p>Describe the problem in plain language. I handle the rest. Most ideas go from conversation to working demo within days, not months.</p>
+      </div>
+    </div>
+    <div class="vp">
+      <div class="vp-icon">🎨</div>
+      <div class="vp-text">
+        <h3>Fully Customizable</h3>
+        <p>Every tool is built to fit your brand, your data, and your people — not a generic template. It looks and feels like yours because it is.</p>
+      </div>
+    </div>
+    <div class="vp">
+      <div class="vp-icon rust">🔑</div>
+      <div class="vp-text">
+        <h3>No Lock-In. Ever.</h3>
+        <p>You own the finished tool outright. No subscriptions, no monthly fees, no vendor dependency. It lives where you want it to live.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Tools Grid -->
-<section class="section" style="background: white;">
+<section class="section" id="tools" style="background: white;">
   <div class="section-inner">
     <div class="section-hdr">
-      <div class="eyebrow">What We've Built</div>
-      <h2>Pick a tool. Make it yours.</h2>
-      <p>These are real, working tools. Click any demo to see it live. Every tool can be customized with your branding, data, and use case.</p>
+      <div class="eyebrow">What's Possible</div>
+      <h2>Real tools. Real problems solved.</h2>
+      <p>These aren't mockups — click any demo to use the actual working tool. Each one can be rebuilt and customized for your situation.</p>
     </div>
     <div class="tools-grid">
 
@@ -287,12 +347,12 @@
             <div class="mini-mem"><strong>Coach Rivera</strong>You changed the way I think about showing up every day.</div>
             <div class="mini-mem"><strong>Anonymous</strong>The best neighbor anyone could ask for. We love you!</div>
           </div>
-          <span class="preview-label">Live preview</span>
+          <span class="preview-label">Working demo</span>
         </div>
         <div class="card-body">
           <div class="card-type">Memory & Celebration</div>
           <div class="card-title">Memory Collector</div>
-          <div class="card-desc">Send a private link to friends and family and let them contribute memories, photos, and messages — all gathered in one beautiful, scrollable display. Perfect for milestone birthdays, retirements, or any occasion worth celebrating.</div>
+          <div class="card-desc">Send a private link — friends and family submit memories, photos, and messages. Everything collects into one beautiful display. Built for a milestone birthday, adaptable for any occasion worth celebrating.</div>
           <div class="card-tags">
             <span class="tag">Private link</span>
             <span class="tag">Photo uploads</span>
@@ -306,7 +366,7 @@
         </div>
       </div>
 
-      <!-- Family / Group Calendar -->
+      <!-- Group Calendar -->
       <div class="tool-card">
         <div class="card-preview">
           <div class="mini-cal">
@@ -316,15 +376,15 @@
             <div class="mc-day"></div><div class="mc-day ev"></div><div class="mc-day ev"></div><div class="mc-day ev"></div><div class="mc-day"></div><div class="mc-day"></div><div class="mc-day"></div>
             <div class="mc-day"></div><div class="mc-day"></div><div class="mc-day ev2"></div><div class="mc-day"></div><div class="mc-day"></div><div class="mc-day ev"></div><div class="mc-day ev"></div>
           </div>
-          <span class="preview-label">Live preview</span>
+          <span class="preview-label">Working demo</span>
         </div>
         <div class="card-body">
           <div class="card-type">Planning & Coordination</div>
           <div class="card-title">Group Calendar Planner</div>
-          <div class="card-desc">A shared, synced calendar for any group — family, team, or club. Color-coded events, cross-device sync, and a zoom slider to see the whole season at a glance. No app downloads, no logins required for viewers.</div>
+          <div class="card-desc">A shared, synced calendar for any group — family, team, or club. Color-coded events, cross-device sync, and a full season view. No app downloads. No logins required for viewers.</div>
           <div class="card-tags">
             <span class="tag">Cross-device sync</span>
-            <span class="tag">Color-coded events</span>
+            <span class="tag">Color-coded</span>
             <span class="tag">Season view</span>
           </div>
           <div class="card-footer">
@@ -334,7 +394,7 @@
         </div>
       </div>
 
-      <!-- Meeting Brain / CRM -->
+      <!-- Meeting Brain -->
       <div class="tool-card accent">
         <div class="card-preview">
           <div class="mini-crm">
@@ -343,12 +403,12 @@
             <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#4ade80"></div><span><strong>Valley HVAC</strong> · Closed · Workshop booked</span></div>
             <div class="mini-crm-row"><div class="mini-crm-dot" style="background:#fbbf24"></div><span><strong>Main St. Boutique</strong> · Interested · Call Thursday</span></div>
           </div>
-          <span class="preview-label">Live preview</span>
+          <span class="preview-label">Working demo</span>
         </div>
         <div class="card-body">
           <div class="card-type">Business · CRM</div>
           <div class="card-title">Meeting Brain</div>
-          <div class="card-desc">A lightweight meeting logger and follow-up tracker built for small business owners and consultants. Log meetings with voice input or a photo of a business card, track next steps, and never lose a lead again.</div>
+          <div class="card-desc">A lightweight meeting logger and follow-up tracker. Log meetings by voice or scan a business card, track next steps by urgency, and never let a lead slip away. Built for consultants and small business owners.</div>
           <div class="card-tags">
             <span class="tag">Voice input</span>
             <span class="tag">Follow-up tracker</span>
@@ -362,7 +422,7 @@
         </div>
       </div>
 
-      <!-- Thank You Card Generator -->
+      <!-- Thank You Cards -->
       <div class="tool-card">
         <div class="card-preview">
           <div class="mini-cards">
@@ -378,20 +438,20 @@
         <div class="card-body">
           <div class="card-type">Relationships & Gratitude</div>
           <div class="card-title">Thank You Card Studio</div>
-          <div class="card-desc">Generate personalized thank you cards in seconds. Choose a style, type a few details, and get a beautifully formatted card ready to print or share digitally. Great for events, milestones, or everyday gratitude.</div>
+          <div class="card-desc">Type a few details, choose a style, and get a print-ready or shareable thank you card in seconds. AI-assisted writing, fully customizable with your branding. Great for events, milestones, or everyday gratitude.</div>
           <div class="card-tags">
             <span class="tag">AI-assisted writing</span>
             <span class="tag">Print-ready</span>
             <span class="tag">Custom branding</span>
           </div>
           <div class="card-footer">
-            <a class="btn-learn" href="#" onclick="alert('Coming soon — reach out to get early access!');return false;">Coming Soon</a>
+            <a class="btn-learn" href="#idea" onclick="document.getElementById('idea-what').value='I\'m interested in the Thank You Card Studio — when will it be ready?';">Get Early Access</a>
             <span class="price-tag">From $79</span>
           </div>
         </div>
       </div>
 
-      <!-- Team Trivia / Quiz -->
+      <!-- Trivia -->
       <div class="tool-card">
         <div class="card-preview">
           <div class="mini-quiz">
@@ -413,38 +473,38 @@
         <div class="card-body">
           <div class="card-type">Team Building · Events</div>
           <div class="card-title">Custom Trivia & Quiz</div>
-          <div class="card-desc">Build a custom trivia game around your company, team, or event. Works on any device, no app required. Great for onboarding, team nights, conferences, or just a Friday afternoon. You supply the questions — we build the game.</div>
+          <div class="card-desc">A custom trivia game built around your company, team, or event. Works on any device, no app required. Great for onboarding, team nights, or Friday afternoons. You supply the questions — I build the game.</div>
           <div class="card-tags">
             <span class="tag">Custom questions</span>
             <span class="tag">Live scoring</span>
             <span class="tag">No app needed</span>
           </div>
           <div class="card-footer">
-            <a class="btn-learn" href="#" onclick="alert('Coming soon — reach out to get early access!');return false;">Coming Soon</a>
+            <a class="btn-learn" href="#idea" onclick="document.getElementById('idea-what').value='I\'m interested in a custom trivia/quiz tool for my team or event.';">Get Early Access</a>
             <span class="price-tag">From $149</span>
           </div>
         </div>
       </div>
 
-      <!-- Custom Request -->
-      <div class="tool-card" style="border-top-color: var(--rust); background: var(--rust-lt);">
-        <div class="card-preview" style="background: var(--rust-lt); background-image: radial-gradient(circle, rgba(200,90,23,.12) 1px, transparent 1px); background-size: 24px 24px;">
-          <div style="text-align:center; padding: 1.5rem;">
-            <div style="font-size:2.5rem; margin-bottom:.5rem;">💡</div>
-            <div style="font-size:.8rem; font-weight:700; color: var(--rust); max-width:160px; line-height:1.5;">Have an idea? Let's build it.</div>
+      <!-- Your idea -->
+      <div class="tool-card" style="border-top-color: var(--rust); background: var(--rust-lt); cursor:pointer;" onclick="document.getElementById('idea').scrollIntoView({behavior:'smooth'})">
+        <div class="card-preview" style="background: linear-gradient(135deg, var(--rust-lt), var(--cream-dk)); border-bottom: 1px solid var(--border);">
+          <div style="text-align:center;">
+            <div style="font-size:2.8rem; margin-bottom:.6rem;">✏️</div>
+            <div style="font-size:.85rem; font-weight:800; color: var(--rust); line-height:1.4;">Your idea could be next.</div>
           </div>
         </div>
         <div class="card-body">
-          <div class="card-type" style="color:var(--rust);">Your Idea Here</div>
-          <div class="card-title">Something Custom</div>
-          <div class="card-desc">Have a problem you'd love a simple tool to solve? I build lightweight, practical web tools for small businesses, families, and teams. No long contracts, no confusing proposals — just a conversation and a working tool.</div>
+          <div class="card-type" style="color:var(--rust);">You Imagine It</div>
+          <div class="card-title">Something Built for You</div>
+          <div class="card-desc">Every tool on this page started as a simple idea someone had. Describe your problem below — I'll respond with a demo concept and a flat quote. No tech knowledge required.</div>
           <div class="card-tags">
             <span class="tag rust">Any use case</span>
-            <span class="tag rust">Fast turnaround</span>
+            <span class="tag rust">Demo in days</span>
             <span class="tag rust">Flat pricing</span>
           </div>
           <div class="card-footer">
-            <a class="btn-demo" style="background:var(--rust);" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk</a>
+            <a class="btn-primary" href="#idea" onclick="event.stopPropagation();">Share Your Idea</a>
           </div>
         </div>
       </div>
@@ -454,41 +514,95 @@
 </section>
 
 <!-- How it works -->
-<section class="how-section">
+<section class="how-section" id="how">
   <div class="how-inner">
-    <div class="eyebrow">How It Works</div>
-    <h2>From idea to working tool — fast.</h2>
-    <p>No technical knowledge needed on your end. You describe the problem, I build the solution, and you own it outright.</p>
+    <div class="eyebrow light">The Process</div>
+    <h2>Thought to product — here's how it works.</h2>
+    <p>No technical knowledge needed. No long proposals. You describe a problem, I build something you can actually use — and we refine from there.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
-        <h3>We Talk</h3>
-        <p>Free one-hour call to understand what you need, who it's for, and what success looks like.</p>
+        <h3>You Share the Idea</h3>
+        <p>Fill out the form below — or book a free call. Describe the problem in plain language. No need to know what's technically possible.</p>
+        <span class="step-tag">Takes 2 minutes</span>
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h3>I Build</h3>
-        <p>You get a working prototype fast — usually within a few days — so you can react to something real.</p>
+        <h3>I Build a Demo</h3>
+        <p>Within days you'll have a working prototype to react to — not a wireframe or a slide deck. Something real you can click through.</p>
+        <span class="step-tag">Usually 2–5 days</span>
       </div>
       <div class="step">
         <div class="step-num">03</div>
-        <h3>You Own It</h3>
-        <p>The finished tool is yours. Hosted, no subscriptions, no ongoing fees unless you want continued support.</p>
+        <h3>We Refine Together</h3>
+        <p>You give feedback on what's working and what isn't. We adjust until it fits your use case exactly. Most tools take 2–3 rounds.</p>
+        <span class="step-tag">Until it's right</span>
       </div>
       <div class="step">
         <div class="step-num">04</div>
-        <h3>We Refine</h3>
-        <p>We tweak until it feels right. Most tools go through 2–3 rounds of small adjustments before you're happy.</p>
+        <h3>You Own It</h3>
+        <p>The finished tool is yours — hosted, branded, and yours to share. No ongoing fees unless you want continued updates or support.</p>
+        <span class="step-tag">No lock-in. Ever.</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-  <h2>Ready to build something?</h2>
-  <p>Whether you have a specific tool in mind or just a problem worth solving, the first conversation is free and there's no obligation.</p>
-  <a class="btn-white" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3JOeETJo6a8QW0HtjOY-UiLHuj4vQKiX3vWsE5M5s9rSHV8KEQ1zcHW-JZ6Zd-MCYB0Hqxhnu0?gv=true" target="_blank">Let's Talk — It's Free</a>
+<!-- Idea Form -->
+<section class="idea-section" id="idea">
+  <div class="idea-inner">
+    <div class="idea-left">
+      <div class="eyebrow">Got an Idea?</div>
+      <h2>Tell me what you're thinking.<br><span>I'll build the demo.</span></h2>
+      <p>You don't need a full plan — just a problem worth solving. Fill out the form and I'll come back to you with a working concept and a quote. Most ideas get a demo response within 48 hours.</p>
+      <p>No commitment. No jargon. Just a real answer to whether your idea is buildable and what it might cost.</p>
+      <div class="idea-proof">
+        <div class="proof-item"><div class="proof-dot"></div>Demo concepts returned within 48 hours</div>
+        <div class="proof-item"><div class="proof-dot"></div>Flat, transparent pricing — no surprise invoices</div>
+        <div class="proof-item"><div class="proof-dot rust"></div>Works for families, teams, and businesses</div>
+        <div class="proof-item"><div class="proof-dot rust"></div>Every tool on this page started exactly like this</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="idea-form" id="idea-form">
+        <h3>Share your idea</h3>
+        <p class="form-sub">I read every submission personally and respond with a working concept — not a sales pitch.</p>
+        <div class="form-row">
+          <label>Your Name</label>
+          <input type="text" id="idea-name" placeholder="First and last name">
+        </div>
+        <div class="form-row">
+          <label>Email Address</label>
+          <input type="email" id="idea-email" placeholder="you@example.com">
+        </div>
+        <div class="form-row">
+          <label>Who is this tool for?</label>
+          <select id="idea-for">
+            <option value="">Select one…</option>
+            <option>My family</option>
+            <option>My small business</option>
+            <option>My team or employees</option>
+            <option>My customers or clients</option>
+            <option>A community or group</option>
+            <option>A special event or celebration</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Describe your idea</label>
+          <textarea id="idea-what" placeholder="What problem are you trying to solve? What would the tool do? Don't worry about the technical details — just describe what you wish existed."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitIdea()">Send My Idea — Get a Demo Back</button>
+        <p class="form-note">No commitment required. I'll respond personally within 48 hours.</p>
+      </div>
+      <div class="form-thanks" id="form-thanks">
+        <div class="thanks-icon">🎉</div>
+        <h3>Got it — I'll be in touch soon.</h3>
+        <p>Thanks for sharing your idea. I'll review it personally and send you a demo concept and quote within 48 hours.<br><br>In the meantime, feel free to explore the working tools above.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Footer -->
@@ -497,5 +611,30 @@
   <p style="margin-top:.4rem">CuriosITy Driven · People Centered · Thoughtful AI · Growing Together</p>
 </footer>
 
+<script>
+function submitIdea() {
+  const name  = document.getElementById('idea-name').value.trim();
+  const email = document.getElementById('idea-email').value.trim();
+  const forWho = document.getElementById('idea-for').value;
+  const what  = document.getElementById('idea-what').value.trim();
+
+  if (!name || !email || !what) {
+    alert('Please fill in your name, email, and idea before submitting.');
+    return;
+  }
+
+  const subject = encodeURIComponent(`New Tool Idea from ${name}`);
+  const body = encodeURIComponent(
+    `Name: ${name}\nEmail: ${email}\nFor: ${forWho || 'Not specified'}\n\nIdea:\n${what}`
+  );
+
+  window.location.href = `mailto:john@inlandnw.ai?subject=${subject}&body=${body}`;
+
+  // Show thank you
+  document.getElementById('idea-form').style.display = 'none';
+  const thanks = document.getElementById('form-thanks');
+  thanks.style.display = 'block';
+}
+</script>
 </body>
 </html>
